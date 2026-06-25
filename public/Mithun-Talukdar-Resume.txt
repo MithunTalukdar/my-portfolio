@@ -1,0 +1,29 @@
+Mithun Talukdar
+Full Stack Web Developer | MERN Stack Developer
+
+Email: your-email@example.com
+GitHub: https://github.com/MithunTalukdar
+LinkedIn: https://linkedin.com/in/mithun-talukdar
+
+Professional Summary
+Passionate Full Stack Web Developer specializing in MongoDB, Express.js, React.js, and Node.js. Focused on building scalable web applications, modern user experiences, secure APIs, and practical software solutions.
+
+Core Skills
+Frontend: HTML5, CSS3, JavaScript ES6+, React.js, Tailwind CSS, Redux, React Router
+Backend: Node.js, Express.js, REST APIs, JWT Authentication, Bcrypt
+Database: MongoDB Atlas, Mongoose
+Tools: Git, GitHub, Postman, VS Code, Vercel, Render
+
+Projects
+Learning Management System (LMS)
+- Full-stack academic management platform using the MERN stack.
+- Includes authentication, course management, quiz system, progress tracking, certificate generation, and admin dashboard.
+
+Lumina E-Commerce Website
+- Modern shopping platform with responsive UI, product browsing, cart management, authentication, and checkout flow.
+
+Swastik International Website
+- Professional business website with modern UI, responsive pages, company profile sections, and service showcases.
+
+Services
+Full Stack Web Development, Responsive Website Design, MERN Stack Applications, REST API Development, Database Design, Website Deployment.

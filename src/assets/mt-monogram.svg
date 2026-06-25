@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">MT Monogram Logo</title>
+  <desc id="desc">Circular Mithun Talukdar MT monogram logo with blue and purple gradient ring.</desc>
+  <defs>
+    <linearGradient id="ring" x1="84" y1="92" x2="430" y2="421" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#22D3EE"/>
+      <stop offset="0.46" stop-color="#0EA5E9"/>
+      <stop offset="0.72" stop-color="#4F46E5"/>
+      <stop offset="1" stop-color="#A855F7"/>
+    </linearGradient>
+    <linearGradient id="mFace" x1="125" y1="143" x2="283" y2="351" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#21E6FF"/>
+      <stop offset="0.52" stop-color="#0EA5E9"/>
+      <stop offset="1" stop-color="#2563EB"/>
+    </linearGradient>
+    <linearGradient id="mShade" x1="250" y1="259" x2="306" y2="392" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#1D4ED8"/>
+      <stop offset="1" stop-color="#0F172A"/>
+    </linearGradient>
+    <linearGradient id="tFace" x1="288" y1="150" x2="384" y2="311" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="0.48" stop-color="#E5E7EB"/>
+      <stop offset="1" stop-color="#BFC7D4"/>
+    </linearGradient>
+    <radialGradient id="disc" cx="43%" cy="34%" r="70%">
+      <stop offset="0" stop-color="#1F2937"/>
+      <stop offset="0.58" stop-color="#101827"/>
+      <stop offset="1" stop-color="#050711"/>
+    </radialGradient>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="145%">
+      <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#000000" flood-opacity="0.52"/>
+      <feDropShadow dx="0" dy="0" stdDeviation="8" flood-color="#22D3EE" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+  <circle cx="256" cy="256" r="214" fill="#050711" opacity="0.98" filter="url(#softShadow)"/>
+  <circle cx="256" cy="256" r="192" fill="url(#disc)" stroke="#1E293B" stroke-width="10"/>
+  <path d="M91 256a165 165 0 0 1 317-64" fill="none" stroke="url(#ring)" stroke-width="16" stroke-linecap="round"/>
+  <path d="M421 231a166 166 0 0 1-298 101" fill="none" stroke="url(#ring)" stroke-width="16" stroke-linecap="round"/>
+  <path d="M128 166h44l83 100 83-100h45l-128 156L172 222v128h-44V166Z" fill="url(#mFace)"/>
+  <path d="M255 266v118l-44-54v-99l44 35Z" fill="url(#mShade)"/>
+  <path d="M292 166h102l-39 43h-31v141h-44V209h-31l43-43Z" fill="url(#tFace)"/>
+  <path d="M128 166h44l83 100 83-100h18L255 290 148 163l-20 3Z" fill="#67E8F9" opacity="0.16"/>
+  <path d="M292 166h102l-15 16h-82l-38 38-10-11 43-43Z" fill="#FFFFFF" opacity="0.38"/>
+</svg>
