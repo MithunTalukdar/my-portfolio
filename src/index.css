@@ -13,20 +13,65 @@
 }
 
 html {
+  width: 100%;
+  max-width: 100%;
   scroll-behavior: smooth;
   color-scheme: dark;
+  overflow-x: hidden;
+  overflow-x: clip;
 }
 
 body {
   margin: 0;
   min-width: 320px;
+  width: 100%;
+  max-width: 100%;
   overflow-x: hidden;
+  overflow-x: clip;
   background:
     radial-gradient(circle at 15% 20%, rgba(34, 211, 238, 0.14), transparent 28rem),
     radial-gradient(circle at 85% 10%, rgba(168, 85, 247, 0.16), transparent 30rem),
     linear-gradient(135deg, #050711 0%, #0b1020 46%, #111827 100%);
   color: #f8fafc;
   font-family: var(--font-sans);
+}
+
+#root {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  overflow-x: clip;
+}
+
+img,
+picture,
+svg,
+video,
+canvas {
+  max-width: 100%;
+}
+
+button,
+a,
+input,
+textarea,
+select {
+  min-width: 0;
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+span,
+strong,
+small,
+a,
+button {
+  overflow-wrap: break-word;
 }
 
 .light body {
@@ -78,11 +123,13 @@ body {
 .icon-button,
 .filter-button {
   display: inline-flex;
+  max-width: 100%;
   align-items: center;
   justify-content: center;
   gap: 0.65rem;
   border-radius: 0.5rem;
   font-weight: 800;
+  text-align: center;
   transition: transform 220ms ease, border-color 220ms ease, background 220ms ease, box-shadow 220ms ease;
 }
 
@@ -132,6 +179,7 @@ body {
 }
 
 .icon-button {
+  flex: 0 0 auto;
   width: 2.75rem;
   height: 2.75rem;
   border: 1px solid rgba(255, 255, 255, 0.14);
@@ -787,6 +835,7 @@ body {
 }
 
 .atomic-wrap {
+  --orbit-scale: 1;
   position: relative;
   min-height: clamp(40rem, 72vw, 52rem);
   overflow: hidden;
@@ -1003,7 +1052,7 @@ body {
   min-height: clamp(4.5rem, 10vw, 6.4rem);
   place-items: center;
   gap: 0.25rem;
-  transform: rotate(var(--angle)) translateX(var(--radius)) rotate(calc(var(--angle) * -1)) rotateX(-67deg);
+  transform: rotate(var(--angle)) translateX(calc(var(--radius) * var(--orbit-scale))) rotate(calc(var(--angle) * -1)) rotateX(-67deg);
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 0.7rem;
   background: rgba(2, 6, 23, 0.74);
@@ -4626,7 +4675,132 @@ body {
   color: #0369a1;
 }
 
+.hero-role-line {
+  display: flex;
+  max-width: 100%;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.2rem 0;
+  line-height: 1.25;
+}
+
+.premium-project-grid,
+.service-grid,
+.education-timeline,
+.coursework-panel,
+.coursework-grid,
+.contribution-heatmap,
+.code-orbit-shell,
+.skills-avatar-grid,
+.projects-avatar-stage,
+.achievements-stage {
+  min-width: 0;
+}
+
+.tilt-card,
+.premium-project-card,
+.service-card,
+.project-card-inner,
+.service-float-shell,
+.experience-card,
+.education-card,
+.github-metric-card,
+.github-dashboard-panel,
+.contact-intro-card,
+.contact-card,
+.contact-form-panel,
+.code-orbit-stage,
+.code-orbit-panel,
+.section-avatar-shell,
+.character-scene,
+.skill-progress-panel {
+  min-width: 0;
+}
+
+.premium-project-grid > *,
+.service-grid > * {
+  min-width: 0;
+  height: 100%;
+}
+
+.premium-project-grid .tilt-card {
+  height: 100%;
+}
+
+.project-card-inner {
+  display: flex;
+  flex-direction: column;
+}
+
+.project-card-inner > .relative {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.project-card-inner > .relative > :last-child {
+  margin-top: auto;
+  padding-top: 1.5rem;
+}
+
+.project-visual-copy p,
+.project-modal-copy p,
+.project-category-pill,
+.tech-badge,
+.filter-button,
+.footer-contact-link,
+.contact-direct-card a {
+  max-width: 100%;
+}
+
+.project-stat,
+.project-modal-stat {
+  min-width: 0;
+}
+
+.project-stat svg,
+.project-modal-stat svg,
+.project-details-button svg,
+.project-feature-chip svg,
+.contact-direct-card svg,
+.footer-contact-link svg,
+.code-orbit-controls svg,
+.code-orbit-badges svg {
+  flex: 0 0 auto;
+}
+
+.contact-direct-card a,
+.footer-contact-link,
+.project-feature-chip,
+.code-orbit-badges div,
+.code-orbit-panel-title {
+  min-width: 0;
+}
+
+.contact-social-row {
+  flex-wrap: wrap;
+}
+
+.floating-field input,
+.floating-field textarea,
+.field-input {
+  max-width: 100%;
+}
+
+.code-orbit-canvas {
+  min-width: 0;
+}
+
+.code-orbit-panel-title > div,
+.contact-card > div {
+  min-width: 0;
+}
+
 @media (max-width: 860px) {
+  .section-padding {
+    padding-block: clamp(4rem, 12vw, 6rem);
+  }
+
   .floating-tech-logo {
     opacity: 0.42;
   }
@@ -4663,6 +4837,7 @@ body {
   }
 
   .atomic-wrap {
+    --orbit-scale: 0.82;
     min-height: 48rem;
   }
 
@@ -4699,6 +4874,46 @@ body {
 
   .code-orbit-canvas {
     height: 28rem;
+  }
+
+  .premium-timeline {
+    gap: 1.15rem;
+  }
+
+  .timeline-progress {
+    left: 1.3rem;
+  }
+
+  .experience-timeline-item,
+  .experience-timeline-item.is-left,
+  .experience-timeline-item.is-right {
+    width: 100%;
+    justify-self: stretch;
+    padding-right: 0;
+    padding-left: 3.25rem;
+  }
+
+  .experience-timeline-item.is-left .timeline-node,
+  .experience-timeline-item.is-right .timeline-node {
+    left: 0;
+    right: auto;
+  }
+
+  .coursework-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-intro-card,
+  .contact-form-panel,
+  .experience-card,
+  .education-card,
+  .github-metric-card,
+  .github-dashboard-panel {
+    padding: clamp(1.1rem, 4vw, 1.4rem);
+  }
+
+  .project-visual {
+    height: clamp(12.5rem, 42vw, 14rem);
   }
 }
 
@@ -4743,6 +4958,21 @@ body {
 }
 
 @media (max-width: 560px) {
+  .primary-button,
+  .secondary-button {
+    min-height: 2.9rem;
+    padding: 0.82rem 1rem;
+  }
+
+  .filter-button {
+    flex: 1 1 8.5rem;
+    padding-inline: 0.85rem;
+  }
+
+  .premium-filter-bar {
+    justify-content: stretch;
+  }
+
   .developer-avatar {
     min-height: 35rem;
   }
@@ -4842,6 +5072,30 @@ body {
     grid-template-columns: 1fr;
   }
 
+  .education-timeline {
+    grid-template-columns: 1fr;
+  }
+
+  .education-progress-line {
+    left: 2rem;
+    right: auto;
+    top: 1.4rem;
+    bottom: 1.4rem;
+    width: 2px;
+    height: auto;
+    transform-origin: top;
+    background: linear-gradient(180deg, #67e8f9, #facc15, #f0abfc);
+  }
+
+  .education-card {
+    min-height: auto;
+    padding-left: 1.25rem;
+  }
+
+  .course-chip {
+    align-items: flex-start;
+  }
+
   .avatar-side-monitor {
     opacity: 0.72;
     width: 8rem;
@@ -4872,6 +5126,7 @@ body {
   }
 
   .atomic-wrap {
+    --orbit-scale: 0.62;
     min-height: 43rem;
   }
 
@@ -4915,6 +5170,145 @@ body {
 
   .code-orbit-controls button {
     flex: 1 1 8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .atomic-wrap {
+    --orbit-scale: 0.42;
+  }
+
+  .typing-gradient {
+    max-width: 100%;
+  }
+
+  .hero-role-line {
+    min-height: auto;
+  }
+
+  .project-card-inner > .relative {
+    padding: 1.15rem;
+  }
+
+  .project-visual-orb {
+    right: 1rem;
+    top: 1rem;
+    width: 4.4rem;
+    height: 4.4rem;
+    font-size: 2rem;
+  }
+
+  .project-visual-copy {
+    left: 1rem;
+    right: 1rem;
+  }
+
+  .project-visual-copy strong,
+  .project-modal-copy strong {
+    font-size: clamp(1.3rem, 8vw, 1.8rem);
+  }
+
+  .project-stat,
+  .project-modal-stat {
+    padding: 0.68rem;
+  }
+
+  .project-stat span,
+  .project-modal-stat span {
+    font-size: 0.62rem;
+  }
+
+  .project-details-button,
+  .premium-project-card .primary-button,
+  .premium-project-card .secondary-button,
+  .premium-modal .primary-button,
+  .premium-modal .secondary-button {
+    flex: 1 1 100%;
+    margin-left: 0;
+  }
+
+  .premium-modal {
+    padding: 1rem;
+  }
+
+  .project-modal-hero {
+    min-height: 13rem;
+  }
+
+  .project-modal-mark {
+    right: 1rem;
+    top: 1rem;
+    width: 4.5rem;
+    height: 4.5rem;
+    font-size: 2.2rem;
+  }
+
+  .project-modal-copy {
+    left: 1rem;
+    right: 1rem;
+    bottom: 1rem;
+  }
+
+  .contact-card {
+    align-items: flex-start;
+  }
+
+  .contact-card-icon,
+  .contact-intro-icon {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .code-orbit-hud {
+    grid-template-columns: 1fr;
+  }
+
+  .code-orbit-canvas {
+    height: 21rem;
+  }
+
+  .code-orbit-controls button {
+    flex-basis: 100%;
+  }
+
+  .contribution-heatmap {
+    gap: 0.28rem;
+  }
+}
+
+@media (max-width: 375px) {
+  .atomic-wrap {
+    --orbit-scale: 0.38;
+  }
+
+  .section-padding {
+    padding-block: 3.75rem;
+  }
+
+  .icon-button {
+    width: 2.55rem;
+    height: 2.55rem;
+  }
+
+  .project-card-inner > .relative,
+  .service-float-shell,
+  .experience-card,
+  .education-card,
+  .contact-intro-card,
+  .contact-form-panel,
+  .github-metric-card,
+  .github-dashboard-panel,
+  .code-orbit-stage,
+  .code-orbit-panel {
+    padding: 1rem;
+  }
+
+  .project-visual {
+    height: 11.5rem;
+  }
+
+  .code-orbit-canvas {
+    height: 19rem;
   }
 }
 

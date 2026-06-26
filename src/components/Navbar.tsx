@@ -46,6 +46,8 @@ export function Navbar({ theme, onThemeToggle }: NavbarProps) {
             type="button"
             className="icon-button menu-button"
             aria-label="Toggle menu"
+            aria-expanded={isOpen}
+            aria-controls="mobile-navigation"
             onClick={() => setIsOpen((current) => !current)}
           >
             {isOpen ? <FiX /> : <FiMenu />}
@@ -55,6 +57,7 @@ export function Navbar({ theme, onThemeToggle }: NavbarProps) {
 
       {isOpen ? (
         <motion.div
+          id="mobile-navigation"
           className="border-t border-white/10 bg-slate-950/95 px-4 py-4 backdrop-blur-2xl light:bg-white/95 lg:hidden"
           initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}

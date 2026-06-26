@@ -16,7 +16,7 @@ export function SectionHeader({ eyebrow, title, description }: SectionHeaderProp
       transition={{ duration: 0.65 }}
     >
       <span className="text-sm font-semibold uppercase tracking-[0.28em] text-cyan-300">{eyebrow}</span>
-      <h2 className="mt-3 text-3xl font-black text-slate-50 md:text-5xl">{title}</h2>
+      <h2 className="mt-3 text-[clamp(2rem,8vw,3rem)] font-black leading-tight text-slate-50 md:text-5xl">{title}</h2>
       {description ? <p className="mt-4 text-base leading-8 text-slate-300">{description}</p> : null}
     </motion.div>
   );

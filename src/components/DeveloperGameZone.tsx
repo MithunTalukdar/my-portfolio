@@ -497,19 +497,32 @@ export function DeveloperGameZone() {
 
     const drawOverlay = (runtime: GameRuntime) => {
       if (runtime.active) return;
+      const fitCanvasText = (text: string, maxWidth: number, maxSize: number, minSize: number, weight: number) => {
+        let size = Math.min(maxSize, Math.max(minSize, runtime.width / 12));
+        context.font = `${weight} ${size}px Inter, sans-serif`;
+        while (size > minSize && context.measureText(text).width > maxWidth) {
+          size -= 1;
+          context.font = `${weight} ${size}px Inter, sans-serif`;
+        }
+      };
+      const overlayMaxWidth = runtime.width - 32;
+      const titleText = runtime.finished ? "FINAL SCORE" : "CODE ORBIT CHALLENGE";
+      const valueText = runtime.finished ? String(runtime.score) : "</>";
+      const detailText = runtime.finished ? getSkillLevel(runtime.score) : "60 second neon reflex simulation";
+
       context.save();
       context.fillStyle = "rgba(2, 6, 23, 0.56)";
       context.fillRect(0, 0, runtime.width, runtime.height);
       context.textAlign = "center";
       context.fillStyle = "#ffffff";
-      context.font = "950 28px Inter, sans-serif";
-      context.fillText(runtime.finished ? "FINAL SCORE" : "CODE ORBIT CHALLENGE", runtime.width / 2, runtime.height / 2 - 18);
+      fitCanvasText(titleText, overlayMaxWidth, 28, 16, 950);
+      context.fillText(titleText, runtime.width / 2, runtime.height / 2 - 18);
       context.fillStyle = "#bae6fd";
-      context.font = "900 42px Inter, sans-serif";
-      context.fillText(runtime.finished ? String(runtime.score) : "</>", runtime.width / 2, runtime.height / 2 + 36);
+      fitCanvasText(valueText, overlayMaxWidth, 42, 30, 900);
+      context.fillText(valueText, runtime.width / 2, runtime.height / 2 + 36);
       context.fillStyle = "#cbd5e1";
-      context.font = "800 13px Inter, sans-serif";
-      context.fillText(runtime.finished ? getSkillLevel(runtime.score) : "60 second neon reflex simulation", runtime.width / 2, runtime.height / 2 + 68);
+      fitCanvasText(detailText, overlayMaxWidth, 13, 10, 800);
+      context.fillText(detailText, runtime.width / 2, runtime.height / 2 + 68);
       context.restore();
     };
 
