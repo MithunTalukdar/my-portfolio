@@ -10,10 +10,10 @@ export function SectionHeader({ eyebrow, title, description }: SectionHeaderProp
   return (
     <motion.div
       className="mx-auto mb-12 max-w-3xl text-center"
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
-      transition={{ duration: 0.65 }}
+      initial={{ opacity: 0, y: 24, scale: 0.98 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
     >
       <span className="text-sm font-semibold uppercase tracking-[0.28em] text-cyan-300">{eyebrow}</span>
       <h2 className="mt-3 text-[clamp(2rem,8vw,3rem)] font-black leading-tight text-slate-50 md:text-5xl">{title}</h2>

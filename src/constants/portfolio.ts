@@ -1,17 +1,17 @@
 import {
-  FaCode,
-  FaCss3Alt,
-  FaDatabase,
+  FaGraduationCap,
   FaEnvelope,
   FaGithub,
-  FaGitAlt,
-  FaHtml5,
-  FaJs,
   FaLinkedin,
-  FaNodeJs,
+  FaPhone,
+  FaMapMarkerAlt,
   FaReact,
-  FaRocket,
-  FaServer,
+  FaJs,
+  FaHtml5,
+  FaCss3Alt,
+  FaNodeJs,
+  FaGitAlt,
+  FaGlobe,
 } from "react-icons/fa";
 import { SiExpress, SiMongodb, SiPostman, SiRedux, SiRender, SiTailwindcss, SiVercel } from "react-icons/si";
 import { VscCode } from "react-icons/vsc";
@@ -21,14 +21,15 @@ import type { Project, Service, Skill } from "../types/portfolio";
 
 export const profile = {
   name: "Mithun Talukdar",
-  title: "Full Stack Web Developer | MERN Stack Developer",
+  role: "AI-Powered Full Stack Developer",
+  status: "Available for Opportunities",
+  location: "Kolkata, West Bengal, India",
   email: "mithuntalukdar2003@gmail.com",
-  phone: "+91 8777673839",
+  phone: "+91 87776 73839",
   github: "https://github.com/MithunTalukdar",
   linkedin: "https://linkedin.com/in/mithun-talukdar",
+  bio: "Specializing in building modern, scalable web applications with MERN Stack, Next.js, and AI Integration. Crafting robust REST APIs and high-performance, user-centric interfaces.",
   resume: "/Mithun-Talukdar-Resume.pdf",
-  tagline: "Building Modern, Scalable and User-Centric Web Applications.",
-  location: "India",
 };
 
 export const navItems = [
@@ -113,21 +114,21 @@ export const skillOrbits = [
     skills: [
       { name: "Node.js", icon: FaNodeJs, detail: "Server-side JavaScript runtimes for scalable API and business logic." },
       { name: "Express.js", icon: SiExpress, detail: "Modular REST APIs, middleware, protected routes, and clean controllers." },
-      { name: "REST API", icon: FaServer, detail: "Resource-oriented API design with reliable request and response flows." },
-      { name: "JWT Authentication", icon: FaCode, detail: "Token-based authentication, authorization, and protected application areas." },
-      { name: "Bcrypt", icon: FaDatabase, detail: "Secure password hashing and account credential protection." },
+      { name: "REST API", icon: FaGlobe, detail: "Resource-oriented API design with reliable request and response flows." },
+      { name: "JWT Authentication", icon: FaReact, detail: "Token-based authentication, authorization, and protected application areas." },
+      { name: "Bcrypt", icon: SiMongodb, detail: "Secure password hashing and account credential protection." },
     ],
   },
   {
     label: "Database Orbit",
     category: "Database",
-    radius: 23,
-    duration: 24,
+    radius: 24,
+    duration: 38,
     color: "emerald",
     skills: [
-      { name: "MongoDB", icon: SiMongodb, detail: "Document database modeling for flexible, application-friendly data." },
-      { name: "Mongoose", icon: SiMongodb, detail: "Schemas, validation, relationships, and maintainable MongoDB access patterns." },
-      { name: "MongoDB Atlas", icon: SiMongodb, detail: "Cloud database hosting, connection management, and deployment-ready storage." },
+      { name: "MongoDB", icon: SiMongodb, detail: "Document database design, collections, aggregation pipelines, and Atlas clusters." },
+      { name: "Mongoose", icon: SiMongodb, detail: "Schema validation, business models, indexing, and transactional integrity." },
+      { name: "MongoDB Atlas", icon: SiMongodb, detail: "Cloud-hosted database clusters, automated backups, and global scalability." },
     ],
   },
   {
@@ -161,69 +162,177 @@ export const projects: Project[] = [
     title: "Learning Management System (LMS)",
     slug: "lms",
     description:
-      "A full-stack academic management platform built using MERN Stack that enables students, teachers, and administrators to manage courses, quizzes, assignments, progress tracking, and certificates.",
+      "A full-stack academic platform built using MERN Stack that enables students, instructors, and administrators to manage courses, track real-time learning progress, attempt quizzes, and issue verified completion certificates.",
     features: [
-      "Authentication System",
-      "Course Management",
-      "Quiz System",
-      "Progress Tracking",
-      "Certificate Generation",
-      "Admin Dashboard",
+      "Role-Based Authentication (JWT)",
+      "Course Curriculum Management",
+      "Interactive Quiz Engine",
+      "Real-Time Progress Tracking",
+      "Automated Certificate Generation",
+      "Admin Analytics Dashboard",
     ],
-    tech: ["React.js", "Node.js", "Express.js", "MongoDB", "JWT"],
+    tech: ["React.js", "Node.js", "Express.js", "MongoDB", "JWT Auth", "Tailwind CSS"],
     categories: ["Full Stack"],
-    gradient: "from-cyan-400 via-violet-500 to-fuchsia-500",
-    liveUrl: "#",
-    repoUrl: "https://github.com/MithunTalukdar",
+    gradient: "from-cyan-500 via-blue-600 to-indigo-700",
+    liveUrl: "https://lms-pi-six-31.vercel.app",
+    repoUrl: "https://github.com/MithunTalukdar/LMS",
   },
   {
-    title: "Lumina E-Commerce Website",
+    title: "Lumina E-Commerce Shopping Platform",
     slug: "lumina",
     description:
-      "A modern shopping platform featuring responsive UI, product browsing, cart management, authentication, and secure checkout flow.",
-    features: ["Responsive storefront", "Product browsing", "Cart management", "Authentication", "Checkout flow"],
-    tech: ["React.js", "Node.js", "Express.js", "MongoDB"],
+      "A modern, full-featured online storefront with rapid product discovery, interactive category filters, real-time cart state management, checkout flows, and responsive mobile-first UI.",
+    features: [
+      "Dynamic Product Catalog",
+      "Cart & State Persistence",
+      "Instant Search & Category Filters",
+      "Seamless Checkout Flow",
+      "Mobile-Optimized Experience",
+    ],
+    tech: ["TypeScript", "React.js", "Tailwind CSS", "REST APIs", "Vite"],
     categories: ["Full Stack", "E-Commerce"],
-    gradient: "from-emerald-300 via-sky-400 to-indigo-500",
-    liveUrl: "#",
-    repoUrl: "https://github.com/MithunTalukdar",
+    gradient: "from-emerald-500 via-teal-600 to-cyan-700",
+    liveUrl: "https://lumina-shoping.vercel.app",
+    repoUrl: "https://github.com/MithunTalukdar/lumina-shoping",
   },
   {
-    title: "Swastik International Website",
+    title: "Course Learning Web Platform",
+    slug: "course",
+    description:
+      "An interactive educational platform designed for seamless video course consumption, structured module navigation, progress indicators, and intuitive student dashboards.",
+    features: [
+      "Course Module Directory",
+      "Video Player Integration",
+      "Curriculum Outlines",
+      "Responsive Learning View",
+      "Student Dashboard UI",
+    ],
+    tech: ["React.js", "JavaScript", "Tailwind CSS", "REST APIs", "Vercel"],
+    categories: ["Frontend"],
+    gradient: "from-purple-500 via-violet-600 to-pink-600",
+    liveUrl: "https://course-pi-navy.vercel.app/",
+    repoUrl: "https://github.com/MithunTalukdar/course",
+  },
+  {
+    title: "User Management & Auth System",
+    slug: "user-auth",
+    description:
+      "A production-ready full-stack authentication and user profile management system with JWT sessions, encrypted password hashing via Bcrypt, and complete CRUD user controls.",
+    features: [
+      "Secure JWT Token Auth",
+      "Bcrypt Password Encryption",
+      "Protected Route Guards",
+      "User Profile CRUD",
+      "RESTful API Architecture",
+    ],
+    tech: ["TypeScript", "React.js", "Node.js", "Express.js", "MongoDB Atlas"],
+    categories: ["Full Stack", "Business"],
+    gradient: "from-blue-500 via-indigo-600 to-purple-700",
+    liveUrl: "https://user-iota-ashy.vercel.app",
+    repoUrl: "https://github.com/MithunTalukdar/User",
+  },
+  {
+    title: "Swastik International Corporate Portal",
     slug: "swastik",
     description:
-      "A professional business website designed with modern UI, responsive layouts, company profile pages, and service showcases.",
-    features: ["Company profile pages", "Service showcases", "Responsive layouts", "Modern UI", "Conversion-ready contact areas"],
-    tech: ["React.js", "Tailwind CSS", "Responsive Design"],
+      "A premier business website designed for an international trade and consulting enterprise, featuring modern aesthetic layouts, company profile sections, and high-conversion client inquiry channels.",
+    features: [
+      "Company Profile Presentation",
+      "Global Services Showcase",
+      "Lead Capture & Contact Forms",
+      "High-Performance Responsive Layout",
+      "SEO & Accessibility Optimized",
+    ],
+    tech: ["React.js", "Tailwind CSS", "JavaScript ES6+", "Vercel"],
     categories: ["Frontend", "Business"],
-    gradient: "from-amber-300 via-rose-400 to-violet-500",
-    liveUrl: "#",
-    repoUrl: "https://github.com/MithunTalukdar",
+    gradient: "from-amber-500 via-rose-600 to-purple-700",
+    liveUrl: "https://swastik-international.vercel.app",
+    repoUrl: "https://github.com/MithunTalukdar/Swastik-International",
+  },
+  {
+    title: "HomePro Service Management",
+    slug: "homepro",
+    description:
+      "A comprehensive full-stack service booking and technician management platform built with modern TypeScript and React for on-demand home maintenance requests.",
+    features: [
+      "On-Demand Service Catalog",
+      "Service Booking Management",
+      "Technician Dispatch & Tracking",
+      "Role-Based Access Control",
+    ],
+    tech: ["TypeScript", "React.js", "Node.js", "Express.js", "MongoDB"],
+    categories: ["Full Stack", "Business"],
+    gradient: "from-cyan-500 via-teal-600 to-emerald-700",
+    liveUrl: "https://github.com/MithunTalukdar/HomePro",
+    repoUrl: "https://github.com/MithunTalukdar/HomePro",
   },
 ];
 
 export const experience = [
-  { title: "MERN Stack Development", detail: "Building full-stack applications with React, Express, MongoDB, authentication, dashboards, and APIs." },
-  { title: "Frontend Development", detail: "Designing responsive, accessible interfaces with React, Tailwind CSS, animations, and reusable components." },
-  { title: "Backend API Development", detail: "Creating clean REST APIs, protected routes, validation flows, and reliable server-side architecture." },
-  { title: "Database Design", detail: "Modeling MongoDB collections with Mongoose schemas, references, indexes, and scalable data flows." },
-  { title: "Deployment & Hosting", detail: "Deploying modern web apps on Vercel, Render, and MongoDB Atlas with production environment management." },
+  {
+    title: "MERN Stack Development",
+    detail: "Building end-to-end production web applications using MongoDB, Express.js, React.js, and Node.js.",
+  },
+  {
+    title: "Frontend Engineering",
+    detail: "Crafting highly responsive, accessible, and dynamic user interfaces using React, TypeScript, and Tailwind CSS.",
+  },
+  {
+    title: "Backend API Architecture",
+    detail: "Designing modular RESTful APIs, implementing JWT authentication, middleware pipelines, and Bcrypt security.",
+  },
+  {
+    title: "Database Modeling",
+    detail: "Structuring schema architectures, relationships, indexing, and Atlas cloud clusters in MongoDB.",
+  },
+  {
+    title: "Production Deployment",
+    detail: "Deploying and managing frontend client apps on Vercel and scalable backend services on Render.",
+  },
 ];
 
 export const services: Service[] = [
-  { title: "Full Stack Web Development", description: "End-to-end MERN applications from database schema to polished frontend.", icon: FaCode },
-  { title: "Responsive Website Design", description: "Fast, accessible websites that feel refined across mobile, tablet, and desktop.", icon: HiOutlineDevicePhoneMobile },
-  { title: "MERN Stack Applications", description: "Dashboards, portals, commerce flows, LMS tools, and business platforms.", icon: FaNodeJs },
-  { title: "REST API Development", description: "Secure APIs with auth, validation, modular routing, and maintainable controllers.", icon: FaServer },
-  { title: "Database Design", description: "MongoDB data models optimized for real application workflows.", icon: FaDatabase },
-  { title: "Website Deployment", description: "Production deployments, environment setup, performance passes, and launch support.", icon: MdOutlineCloudDone },
+  {
+    title: "Full Stack Web Development",
+    description:
+      "End-to-end custom web applications built with high scalability, type-safe code, and optimal performance.",
+    icon: FaReact,
+  },
+  {
+    title: "Responsive Frontend Design",
+    description:
+      "Clean, modern, and high-conversion UI/UX interfaces that render flawlessly on mobile, tablet, and desktop screens.",
+    icon: MdOutlineDesignServices,
+  },
+  {
+    title: "MERN Stack Applications",
+    description:
+      "Complete full-stack database-backed platforms utilizing MongoDB, Express.js, React.js, and Node.js.",
+    icon: SiMongodb,
+  },
+  {
+    title: "REST API Development",
+    description:
+      "Secure, scalable, and modular RESTful APIs with token-based JWT authentication and validation layers.",
+    icon: FaGlobe,
+  },
+  {
+    title: "Database Architecture",
+    description:
+      "Efficient schema modeling, indexing strategies, and database cluster management with MongoDB Atlas.",
+    icon: SiMongodb,
+  },
+  {
+    title: "Cloud Deployment & DevOps",
+    description:
+      "Continuous deployment workflows, domain routing, and production infrastructure management on Vercel and Render.",
+    icon: MdOutlineCloudDone,
+  },
 ];
 
 export const achievements = [
-  { label: "Projects Completed", value: 12, suffix: "+" },
-  { label: "GitHub Repositories", value: 18, suffix: "+" },
-  { label: "Technologies Learned", value: 24, suffix: "+" },
-  { label: "Hours of Coding", value: 1200, suffix: "+" },
+  { value: 12, suffix: "+", label: "Projects Completed" },
+  { value: 9, suffix: "", label: "Public Repositories" },
+  { value: 20, suffix: "+", label: "Technologies Mastered" },
+  { value: 1200, suffix: "+", label: "Hours of Coding" },
 ];
-
-export const expertiseIcons = [FaRocket, MdOutlineDesignServices, FaServer, FaDatabase];

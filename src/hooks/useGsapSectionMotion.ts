@@ -8,39 +8,24 @@ export function useGsapSectionMotion() {
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-    const context = gsap.context(() => {
-      gsap.utils.toArray<HTMLElement>("section").forEach((section) => {
-        gsap.fromTo(
-          section,
-          { filter: "saturate(0.88) brightness(0.94)" },
-          {
-            filter: "saturate(1) brightness(1)",
-            ease: "none",
-            scrollTrigger: {
-              trigger: section,
-              start: "top 80%",
-              end: "center 35%",
-              scrub: true,
-            },
-          },
-        );
-      });
-
+    const ctx = gsap.context(() => {
+      // Subtle, GPU-only parallax for decorative background elements
       gsap.utils.toArray<HTMLElement>("[data-parallax]").forEach((element) => {
-        const depth = Number(element.dataset.parallax ?? 24);
+        const depth = Number(element.dataset.parallax ?? 18);
         gsap.to(element, {
           y: -depth,
           ease: "none",
+          force3D: true,
           scrollTrigger: {
             trigger: element,
             start: "top bottom",
             end: "bottom top",
-            scrub: true,
+            scrub: 0.5,
           },
         });
       });
     });
 
-    return () => context.revert();
+    return () => ctx.revert();
   }, []);
 }

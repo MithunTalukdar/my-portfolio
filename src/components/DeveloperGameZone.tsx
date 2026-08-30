@@ -1,725 +1,703 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { FiActivity, FiAward, FiClock, FiCpu, FiPlay, FiRefreshCw, FiTarget, FiVolume2, FiVolumeX, FiZap } from "react-icons/fi";
+import {
+  FiActivity,
+  FiAward,
+  FiClock,
+  FiCpu,
+  FiPlay,
+  FiRefreshCw,
+  FiTarget,
+  FiVolume2,
+  FiVolumeX,
+  FiZap,
+  FiCheckCircle,
+  FiShield,
+  FiHeart,
+} from "react-icons/fi";
+import { FaReact, FaNodeJs, FaBug, FaJs } from "react-icons/fa";
+import { SiMongodb, SiTypescript, SiNextdotjs, SiTailwindcss } from "react-icons/si";
 import { SectionHeader } from "./SectionHeader";
 
 type AudioWindow = Window & typeof globalThis & { webkitAudioContext?: typeof AudioContext };
 
-type SkillLevel = "Curious Coder" | "Bug Hunter" | "Frontend Wizard" | "React Master" | "Full Stack Hero";
+type RankTitle = "Junior Debugger" | "Bug Hunter" | "Frontend Wizard" | "MERN Architect" | "AI Full Stack Master";
 
-interface OrbitParticle {
+interface GameEntity {
   id: number;
-  orbit: number;
-  angle: number;
-  speed: number;
-  radiusX: number;
-  radiusY: number;
-  size: number;
-  value: number;
-  color: string;
-}
-
-interface BurstParticle {
+  type: "tech" | "bug" | "boss" | "bonus";
+  name: string;
+  iconText: string;
   x: number;
   y: number;
   vx: number;
   vy: number;
-  life: number;
-  maxLife: number;
-  size: number;
+  radius: number;
   color: string;
+  glowColor: string;
+  points: number;
+  isBug: boolean;
+  hp?: number;
+  maxHp?: number;
 }
 
-interface BackgroundParticle {
+interface Particle {
   x: number;
   y: number;
-  radius: number;
-  speed: number;
-  phase: number;
-  alpha: number;
+  vx: number;
+  vy: number;
+  size: number;
+  color: string;
+  life: number;
+  maxLife: number;
 }
 
-interface GameRuntime {
-  active: boolean;
-  finished: boolean;
-  width: number;
-  height: number;
-  dpr: number;
-  score: number;
-  highScore: number;
-  combo: number;
-  comboExpiresAt: number;
-  timeLeft: number;
-  difficulty: number;
-  startedAt: number;
-  lastTimestamp: number;
-  particles: OrbitParticle[];
-  bursts: BurstParticle[];
-  background: BackgroundParticle[];
-  pointer: { x: number; y: number; parallaxX: number; parallaxY: number; active: boolean };
-  nextId: number;
+interface FloatingText {
+  id: number;
+  text: string;
+  x: number;
+  y: number;
+  color: string;
+  opacity: number;
 }
 
-interface HudState {
-  active: boolean;
-  finished: boolean;
-  score: number;
-  highScore: number;
-  combo: number;
-  timeLeft: number;
-  difficulty: number;
-  skillLevel: SkillLevel;
-  achievements: string[];
-}
+const techItems = [
+  { name: "React", iconText: "⚛️", color: "#00d8ff", glow: "rgba(0,216,255,0.6)", points: 100 },
+  { name: "Node.js", iconText: "🟢", color: "#22c55e", glow: "rgba(34,197,94,0.6)", points: 120 },
+  { name: "MongoDB", iconText: "🍃", color: "#10b981", glow: "rgba(16,185,129,0.6)", points: 110 },
+  { name: "TypeScript", iconText: "🔷", color: "#3178c6", glow: "rgba(49,120,198,0.6)", points: 130 },
+  { name: "Next.js", iconText: "⚡", color: "#ffffff", glow: "rgba(255,255,255,0.6)", points: 140 },
+  { name: "Tailwind", iconText: "🌊", color: "#38bdf8", glow: "rgba(56,189,248,0.6)", points: 90 },
+];
 
-const gameDuration = 60;
-const storageKey = "mithun-code-orbit-high-score";
-const colors = ["#67e8f9", "#c084fc", "#34d399", "#60a5fa", "#f0abfc", "#facc15"];
+const bugItems = [
+  { name: "Syntax Error", iconText: "🐛", color: "#ef4444", glow: "rgba(239,68,68,0.7)", points: 200 },
+  { name: "Memory Leak", iconText: "👾", color: "#f97316", glow: "rgba(249,115,22,0.7)", points: 250 },
+  { name: "Null Pointer", iconText: "⚠️", color: "#eab308", glow: "rgba(234,179,8,0.7)", points: 180 },
+  { name: "404 Glitch", iconText: "💥", color: "#ec4899", glow: "rgba(236,72,153,0.7)", points: 300 },
+];
 
-const achievementCatalog = [
-  { id: "bug-hunter", label: "Bug Hunter", description: "Score 300+", icon: FiTarget },
-  { id: "frontend-wizard", label: "Frontend Wizard", description: "Reach a 6x combo", icon: FiZap },
-  { id: "react-master", label: "React Master", description: "Score 1200+", icon: FiCpu },
-  { id: "full-stack-hero", label: "Full Stack Hero", description: "Score 2200+", icon: FiAward },
-] as const;
-
-function randomBetween(min: number, max: number) {
-  return min + Math.random() * (max - min);
-}
-
-function getSkillLevel(score: number): SkillLevel {
-  if (score >= 2200) return "Full Stack Hero";
-  if (score >= 1200) return "React Master";
-  if (score >= 700) return "Frontend Wizard";
-  if (score >= 300) return "Bug Hunter";
-  return "Curious Coder";
-}
-
-function loadHighScore() {
-  try {
-    return Number(localStorage.getItem(storageKey) ?? 0);
-  } catch {
-    return 0;
-  }
-}
-
-function createBackground(width: number, height: number) {
-  const count = Math.max(28, Math.min(72, Math.floor((width * height) / 9000)));
-  return Array.from({ length: count }, () => ({
-    x: Math.random() * width,
-    y: Math.random() * height,
-    radius: randomBetween(0.8, 2.2),
-    speed: randomBetween(0.08, 0.38),
-    phase: Math.random() * Math.PI * 2,
-    alpha: randomBetween(0.24, 0.82),
-  }));
-}
-
-function createOrbitParticle(id: number, width: number, height: number, difficulty: number, orbit = Math.floor(Math.random() * 3)): OrbitParticle {
-  const base = Math.min(width, height);
-  const orbitScale = 0.36 + orbit * 0.12;
-  return {
-    id,
-    orbit,
-    angle: Math.random() * Math.PI * 2,
-    speed: randomBetween(0.65, 1.22) * (1 + difficulty * 0.12) * (Math.random() > 0.5 ? 1 : -1),
-    radiusX: base * orbitScale * randomBetween(0.92, 1.1),
-    radiusY: base * (0.16 + orbit * 0.045) * randomBetween(0.92, 1.08),
-    size: Math.max(9, 15 - difficulty * 1.4 + randomBetween(-1, 2.5)),
-    value: 80 + orbit * 24 + Math.round(difficulty * 16),
-    color: colors[(id + orbit) % colors.length],
-  };
-}
-
-function createRuntime(highScore = 0): GameRuntime {
-  const width = 900;
-  const height = 520;
-  return {
-    active: false,
-    finished: false,
-    width,
-    height,
-    dpr: 1,
-    score: 0,
-    highScore,
-    combo: 0,
-    comboExpiresAt: 0,
-    timeLeft: gameDuration,
-    difficulty: 1,
-    startedAt: 0,
-    lastTimestamp: 0,
-    particles: [],
-    bursts: [],
-    background: createBackground(width, height),
-    pointer: { x: width / 2, y: height / 2, parallaxX: 0, parallaxY: 0, active: false },
-    nextId: 1,
-  };
-}
-
-function getParticlePosition(runtime: GameRuntime, particle: OrbitParticle) {
-  const centerX = runtime.width / 2 + runtime.pointer.parallaxX * 15;
-  const centerY = runtime.height / 2 + runtime.pointer.parallaxY * 12;
-  const phase = particle.angle;
-  const tiltOffset = particle.orbit * Math.PI * 0.38;
-  return {
-    x: centerX + Math.cos(phase + tiltOffset) * particle.radiusX,
-    y: centerY + Math.sin(phase) * particle.radiusY + Math.sin(phase + tiltOffset) * particle.orbit * 4,
-  };
-}
-
-function serializeHud(runtime: GameRuntime): HudState {
-  const achievements = achievementCatalog
-    .filter((achievement) => {
-      if (achievement.id === "bug-hunter") return runtime.score >= 300;
-      if (achievement.id === "frontend-wizard") return runtime.combo >= 6;
-      if (achievement.id === "react-master") return runtime.score >= 1200;
-      return runtime.score >= 2200;
-    })
-    .map((achievement) => achievement.id);
-
-  return {
-    active: runtime.active,
-    finished: runtime.finished,
-    score: runtime.score,
-    highScore: runtime.highScore,
-    combo: runtime.combo,
-    timeLeft: Math.ceil(runtime.timeLeft),
-    difficulty: runtime.difficulty,
-    skillLevel: getSkillLevel(runtime.score),
-    achievements,
-  };
-}
+const GAME_DURATION = 45; // 45 intense seconds
+const STORAGE_KEY = "mithun-dev-arcade-high-score";
 
 export function DeveloperGameZone() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const runtimeRef = useRef<GameRuntime>(createRuntime());
-  const audioRef = useRef<AudioContext | null>(null);
-  const soundEnabledRef = useRef(false);
-  const [soundEnabled, setSoundEnabled] = useState(false);
-  const [hud, setHud] = useState<HudState>(() => serializeHud(runtimeRef.current));
+  const audioContextRef = useRef<AudioContext | null>(null);
 
-  const unlockedAchievements = useMemo(
-    () => achievementCatalog.filter((achievement) => hud.achievements.includes(achievement.id)),
-    [hud.achievements],
+  const [gameState, setGameState] = useState<"idle" | "playing" | "gameover">("idle");
+  const [score, setScore] = useState(0);
+  const [highScore, setHighScore] = useState(() => {
+    try {
+      return Number(localStorage.getItem(STORAGE_KEY)) || 0;
+    } catch {
+      return 0;
+    }
+  });
+  const [timeLeft, setTimeLeft] = useState(GAME_DURATION);
+  const [combo, setCombo] = useState(0);
+  const [bugsSquashed, setBugsSquashed] = useState(0);
+  const [techCollected, setTechCollected] = useState(0);
+  const [soundEnabled, setSoundEnabled] = useState(true);
+
+  // Entities & particle state stored in mutable refs for smooth 60fps canvas loop
+  const entitiesRef = useRef<GameEntity[]>([]);
+  const particlesRef = useRef<Particle[]>([]);
+  const floatingTextsRef = useRef<FloatingText[]>([]);
+  const nextIdRef = useRef(1);
+  const lastSpawnTimeRef = useRef(0);
+  const comboExpiresAtRef = useRef(0);
+  const scoreRef = useRef(0);
+  const comboRef = useRef(0);
+  const bugsRef = useRef(0);
+  const techRef = useRef(0);
+  const isPlayingRef = useRef(false);
+
+  // Web Audio Synth Sound FX
+  const playSound = useCallback(
+    (type: "pop" | "zap" | "combo" | "gameover" | "start") => {
+      if (!soundEnabled) return;
+      try {
+        const AudioCtor = window.AudioContext || (window as AudioWindow).webkitAudioContext;
+        if (!AudioCtor) return;
+        if (!audioContextRef.current) audioContextRef.current = new AudioCtor();
+
+        const ctx = audioContextRef.current;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        if (type === "pop") {
+          osc.frequency.setValueAtTime(440, ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.08);
+          gain.gain.setValueAtTime(0.06, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+          osc.type = "sine";
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.08);
+        } else if (type === "zap") {
+          osc.frequency.setValueAtTime(880, ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(220, ctx.currentTime + 0.12);
+          gain.gain.setValueAtTime(0.08, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
+          osc.type = "sawtooth";
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.12);
+        } else if (type === "combo") {
+          osc.frequency.setValueAtTime(520 + comboRef.current * 40, ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(1040, ctx.currentTime + 0.15);
+          gain.gain.setValueAtTime(0.07, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+          osc.type = "triangle";
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.15);
+        } else if (type === "start") {
+          osc.frequency.setValueAtTime(330, ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(660, ctx.currentTime + 0.2);
+          gain.gain.setValueAtTime(0.06, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.2);
+        }
+      } catch {
+        // Audio playback fallback
+      }
+    },
+    [soundEnabled]
   );
 
-  const playTone = useCallback((frequency: number, duration = 0.06, gain = 0.04) => {
-    if (!soundEnabledRef.current) return;
-    const AudioCtor = window.AudioContext || (window as AudioWindow).webkitAudioContext;
-    if (!AudioCtor) return;
-    if (!audioRef.current) audioRef.current = new AudioCtor();
-
-    const context = audioRef.current;
-    const oscillator = context.createOscillator();
-    const gainNode = context.createGain();
-    oscillator.frequency.value = frequency;
-    oscillator.type = "triangle";
-    gainNode.gain.setValueAtTime(gain, context.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.001, context.currentTime + duration);
-    oscillator.connect(gainNode);
-    gainNode.connect(context.destination);
-    oscillator.start();
-    oscillator.stop(context.currentTime + duration);
-  }, []);
-
-  const syncHud = useCallback(() => {
-    const runtime = runtimeRef.current;
-    runtime.highScore = Math.max(runtime.highScore, runtime.score);
-    try {
-      localStorage.setItem(storageKey, String(runtime.highScore));
-    } catch {
-      // High score persistence is a small bonus; gameplay should continue without it.
-    }
-    setHud(serializeHud(runtime));
-  }, []);
-
-  const spawnBurst = useCallback((x: number, y: number, color: string, count = 18) => {
-    const runtime = runtimeRef.current;
-    for (let index = 0; index < count; index += 1) {
+  // Spawn Particle Explosions
+  const spawnExplosion = (x: number, y: number, color: string, count = 16) => {
+    for (let i = 0; i < count; i++) {
       const angle = Math.random() * Math.PI * 2;
-      const speed = randomBetween(1.4, 6.2);
-      runtime.bursts.push({
+      const speed = 1.5 + Math.random() * 5.5;
+      particlesRef.current.push({
         x,
         y,
         vx: Math.cos(angle) * speed,
         vy: Math.sin(angle) * speed,
-        life: randomBetween(24, 44),
-        maxLife: randomBetween(42, 58),
-        size: randomBetween(1.5, 4.2),
+        size: 2 + Math.random() * 4,
         color,
+        life: 1,
+        maxLife: 25 + Math.random() * 20,
       });
     }
-  }, []);
+  };
 
-  const resetParticles = useCallback((runtime: GameRuntime) => {
-    const count = Math.min(10, 5 + Math.floor(runtime.score / 450));
-    runtime.particles = Array.from({ length: count }, () => createOrbitParticle(runtime.nextId++, runtime.width, runtime.height, runtime.difficulty));
-  }, []);
-
-  const startGame = useCallback(() => {
-    const highScore = runtimeRef.current.highScore || loadHighScore();
-    const runtime = createRuntime(highScore);
-    runtime.active = true;
-    runtime.finished = false;
-    runtime.startedAt = performance.now();
-    runtime.lastTimestamp = runtime.startedAt;
-    resetParticles(runtime);
-    runtimeRef.current = runtime;
-    syncHud();
-    playTone(520, 0.08, 0.035);
-  }, [playTone, resetParticles, syncHud]);
-
-  const toggleSound = useCallback(() => {
-    setSoundEnabled((current) => {
-      const next = !current;
-      soundEnabledRef.current = next;
-      if (next) playTone(740, 0.08, 0.035);
-      return next;
+  // Floating text feedback (+100, COMBO x3!)
+  const addFloatingText = (text: string, x: number, y: number, color: string) => {
+    floatingTextsRef.current.push({
+      id: nextIdRef.current++,
+      text,
+      x,
+      y,
+      color,
+      opacity: 1,
     });
-  }, [playTone]);
+  };
 
-  const handleHitTest = useCallback(
-    (event: PointerEvent) => {
-      const canvas = canvasRef.current;
-      const runtime = runtimeRef.current;
-      if (!canvas || !runtime.active) return;
+  // Start Game Handler
+  const startGame = () => {
+    scoreRef.current = 0;
+    comboRef.current = 0;
+    bugsRef.current = 0;
+    techRef.current = 0;
+    entitiesRef.current = [];
+    particlesRef.current = [];
+    floatingTextsRef.current = [];
 
-      const rect = canvas.getBoundingClientRect();
-      const hitPoint = { x: event.clientX - rect.left, y: event.clientY - rect.top };
-      runtime.pointer.x = hitPoint.x;
-      runtime.pointer.y = hitPoint.y;
+    setScore(0);
+    setCombo(0);
+    setBugsSquashed(0);
+    setTechCollected(0);
+    setTimeLeft(GAME_DURATION);
+    setGameState("playing");
+    isPlayingRef.current = true;
 
-      const target = runtime.particles.find((particle) => {
-        const position = getParticlePosition(runtime, particle);
-        return Math.hypot(position.x - hitPoint.x, position.y - hitPoint.y) < particle.size + 14;
-      });
+    playSound("start");
+  };
 
-      if (!target) {
-        runtime.combo = 0;
-        syncHud();
-        playTone(180, 0.055, 0.018);
-        return;
-      }
+  // Calculate Rank Title
+  const getRank = (finalScore: number): RankTitle => {
+    if (finalScore >= 3500) return "AI Full Stack Master";
+    if (finalScore >= 2200) return "MERN Architect";
+    if (finalScore >= 1200) return "Frontend Wizard";
+    if (finalScore >= 500) return "Bug Hunter";
+    return "Junior Debugger";
+  };
 
-      const position = getParticlePosition(runtime, target);
-      runtime.combo = performance.now() < runtime.comboExpiresAt ? runtime.combo + 1 : 1;
-      runtime.comboExpiresAt = performance.now() + 1750;
-      runtime.score += Math.round(target.value * (1 + Math.min(runtime.combo - 1, 12) * 0.18));
-      runtime.difficulty = Math.min(4.2, 1 + runtime.score / 900 + (gameDuration - runtime.timeLeft) / 90);
-      runtime.particles = runtime.particles.filter((particle) => particle.id !== target.id);
-      runtime.particles.push(createOrbitParticle(runtime.nextId++, runtime.width, runtime.height, runtime.difficulty, target.orbit));
-      if (runtime.particles.length < Math.min(10, 5 + Math.floor(runtime.score / 450))) {
-        runtime.particles.push(createOrbitParticle(runtime.nextId++, runtime.width, runtime.height, runtime.difficulty));
-      }
-      spawnBurst(position.x, position.y, target.color, 18 + Math.min(12, runtime.combo));
-      syncHud();
-      playTone(620 + runtime.combo * 36, 0.055, 0.035);
-    },
-    [playTone, spawnBurst, syncHud],
-  );
-
-  useEffect(() => {
-    const highScore = loadHighScore();
-    runtimeRef.current.highScore = highScore;
-    setHud(serializeHud(runtimeRef.current));
-  }, []);
-
+  // Game Loop
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const context = canvas.getContext("2d");
-    if (!context) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
 
-    let animationFrame = 0;
+    let animationFrameId: number;
+    let lastTime = performance.now();
 
-    const resize = () => {
-      const runtime = runtimeRef.current;
+    const handleResize = () => {
       const rect = canvas.getBoundingClientRect();
-      const nextWidth = Math.max(320, rect.width);
-      const nextHeight = Math.max(360, rect.height);
-      const changed = Math.abs(runtime.width - nextWidth) > 2 || Math.abs(runtime.height - nextHeight) > 2;
-      runtime.width = nextWidth;
-      runtime.height = nextHeight;
-      runtime.dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = Math.floor(runtime.width * runtime.dpr);
-      canvas.height = Math.floor(runtime.height * runtime.dpr);
-      context.setTransform(runtime.dpr, 0, 0, runtime.dpr, 0, 0);
-      if (changed) {
-        runtime.background = createBackground(runtime.width, runtime.height);
-        runtime.particles = runtime.particles.map((particle) => ({
-          ...particle,
-          radiusX: createOrbitParticle(particle.id, runtime.width, runtime.height, runtime.difficulty, particle.orbit).radiusX,
-          radiusY: createOrbitParticle(particle.id + 1, runtime.width, runtime.height, runtime.difficulty, particle.orbit).radiusY,
-        }));
-      }
+      canvas.width = rect.width * (window.devicePixelRatio || 1);
+      canvas.height = rect.height * (window.devicePixelRatio || 1);
+      ctx.scale(window.devicePixelRatio || 1, window.devicePixelRatio || 1);
     };
 
-    const drawBackground = (runtime: GameRuntime, time: number) => {
-      const gradient = context.createLinearGradient(0, 0, runtime.width, runtime.height);
-      gradient.addColorStop(0, "#050711");
-      gradient.addColorStop(0.48, "#08111f");
-      gradient.addColorStop(1, "#111827");
-      context.fillStyle = gradient;
-      context.fillRect(0, 0, runtime.width, runtime.height);
+    handleResize();
+    window.addEventListener("resize", handleResize);
 
-      const glow = context.createRadialGradient(
-        runtime.width / 2 + runtime.pointer.parallaxX * 34,
-        runtime.height / 2 + runtime.pointer.parallaxY * 26,
-        20,
-        runtime.width / 2,
-        runtime.height / 2,
-        runtime.width * 0.72,
-      );
-      glow.addColorStop(0, "rgba(34, 211, 238, 0.22)");
-      glow.addColorStop(0.46, "rgba(168, 85, 247, 0.16)");
-      glow.addColorStop(1, "rgba(2, 6, 23, 0)");
-      context.fillStyle = glow;
-      context.fillRect(0, 0, runtime.width, runtime.height);
+    const loop = (currentTime: number) => {
+      const dt = (currentTime - lastTime) / 1000;
+      lastTime = currentTime;
 
-      context.save();
-      context.globalAlpha = 0.18;
-      context.strokeStyle = "#67e8f9";
-      context.lineWidth = 1;
-      for (let x = ((time * 0.018) % 48) - 48; x < runtime.width + 48; x += 48) {
-        context.beginPath();
-        context.moveTo(x, 0);
-        context.lineTo(x - runtime.height * 0.18, runtime.height);
-        context.stroke();
-      }
-      for (let y = ((time * 0.012) % 48) - 48; y < runtime.height + 48; y += 48) {
-        context.beginPath();
-        context.moveTo(0, y);
-        context.lineTo(runtime.width, y + runtime.width * 0.08);
-        context.stroke();
-      }
-      context.restore();
-
-      runtime.background.forEach((particle) => {
-        particle.y -= particle.speed;
-        particle.x += Math.sin(time * 0.001 + particle.phase) * 0.18;
-        if (particle.y < -8) {
-          particle.y = runtime.height + 8;
-          particle.x = Math.random() * runtime.width;
-        }
-        context.save();
-        context.globalAlpha = particle.alpha * (0.55 + Math.sin(time * 0.002 + particle.phase) * 0.25);
-        context.fillStyle = "#bae6fd";
-        context.shadowColor = "#67e8f9";
-        context.shadowBlur = 12;
-        context.beginPath();
-        context.arc(particle.x + runtime.pointer.parallaxX * 8, particle.y + runtime.pointer.parallaxY * 6, particle.radius, 0, Math.PI * 2);
-        context.fill();
-        context.restore();
-      });
-    };
-
-    const drawAtom = (runtime: GameRuntime) => {
-      const centerX = runtime.width / 2 + runtime.pointer.parallaxX * 15;
-      const centerY = runtime.height / 2 + runtime.pointer.parallaxY * 12;
-
-      context.save();
-      context.translate(centerX, centerY);
-      [0, 1, 2].forEach((orbit) => {
-        const particle = createOrbitParticle(orbit + 1, runtime.width, runtime.height, runtime.difficulty, orbit);
-        context.save();
-        context.rotate((orbit - 1) * 0.62);
-        context.strokeStyle = orbit === 1 ? "rgba(192, 132, 252, 0.36)" : "rgba(103, 232, 249, 0.3)";
-        context.lineWidth = 1.4;
-        context.shadowColor = orbit === 1 ? "#c084fc" : "#67e8f9";
-        context.shadowBlur = 12;
-        context.beginPath();
-        context.ellipse(0, 0, particle.radiusX, particle.radiusY, 0, 0, Math.PI * 2);
-        context.stroke();
-        context.restore();
-      });
-
-      const nucleus = context.createRadialGradient(-10, -14, 4, 0, 0, 52);
-      nucleus.addColorStop(0, "#ffffff");
-      nucleus.addColorStop(0.28, "#67e8f9");
-      nucleus.addColorStop(0.62, "#8b5cf6");
-      nucleus.addColorStop(1, "rgba(139, 92, 246, 0.1)");
-      context.fillStyle = nucleus;
-      context.shadowColor = "#67e8f9";
-      context.shadowBlur = 32;
-      context.beginPath();
-      context.arc(0, 0, Math.max(33, Math.min(runtime.width, runtime.height) * 0.07), 0, Math.PI * 2);
-      context.fill();
-
-      context.shadowBlur = 0;
-      context.fillStyle = "#020617";
-      context.font = "950 13px Inter, sans-serif";
-      context.textAlign = "center";
-      context.fillText("</>", 0, 5);
-      context.restore();
-    };
-
-    const drawOrbitParticle = (runtime: GameRuntime, particle: OrbitParticle) => {
-      const position = getParticlePosition(runtime, particle);
-      context.save();
-      context.translate(position.x, position.y);
-      context.shadowColor = particle.color;
-      context.shadowBlur = 22;
-      const gradient = context.createRadialGradient(-particle.size * 0.25, -particle.size * 0.35, 2, 0, 0, particle.size * 1.4);
-      gradient.addColorStop(0, "#ffffff");
-      gradient.addColorStop(0.22, particle.color);
-      gradient.addColorStop(1, "rgba(255, 255, 255, 0)");
-      context.fillStyle = gradient;
-      context.beginPath();
-      context.arc(0, 0, particle.size * 1.45, 0, Math.PI * 2);
-      context.fill();
-
-      context.shadowBlur = 8;
-      context.fillStyle = particle.color;
-      context.beginPath();
-      context.arc(0, 0, particle.size, 0, Math.PI * 2);
-      context.fill();
-      context.fillStyle = "rgba(2, 6, 23, 0.84)";
-      context.font = "950 10px Inter, sans-serif";
-      context.textAlign = "center";
-      context.fillText("{ }", 0, 3);
-      context.restore();
-    };
-
-    const drawBursts = (runtime: GameRuntime) => {
-      runtime.bursts.forEach((particle) => {
-        const alpha = Math.max(0, particle.life / particle.maxLife);
-        context.save();
-        context.globalAlpha = alpha;
-        context.fillStyle = particle.color;
-        context.shadowColor = particle.color;
-        context.shadowBlur = 14;
-        context.beginPath();
-        context.arc(particle.x, particle.y, particle.size * alpha, 0, Math.PI * 2);
-        context.fill();
-        context.restore();
-      });
-    };
-
-    const drawOverlay = (runtime: GameRuntime) => {
-      if (runtime.active) return;
-      const fitCanvasText = (text: string, maxWidth: number, maxSize: number, minSize: number, weight: number) => {
-        let size = Math.min(maxSize, Math.max(minSize, runtime.width / 12));
-        context.font = `${weight} ${size}px Inter, sans-serif`;
-        while (size > minSize && context.measureText(text).width > maxWidth) {
-          size -= 1;
-          context.font = `${weight} ${size}px Inter, sans-serif`;
-        }
-      };
-      const overlayMaxWidth = runtime.width - 32;
-      const titleText = runtime.finished ? "FINAL SCORE" : "CODE ORBIT CHALLENGE";
-      const valueText = runtime.finished ? String(runtime.score) : "</>";
-      const detailText = runtime.finished ? getSkillLevel(runtime.score) : "60 second neon reflex simulation";
-
-      context.save();
-      context.fillStyle = "rgba(2, 6, 23, 0.56)";
-      context.fillRect(0, 0, runtime.width, runtime.height);
-      context.textAlign = "center";
-      context.fillStyle = "#ffffff";
-      fitCanvasText(titleText, overlayMaxWidth, 28, 16, 950);
-      context.fillText(titleText, runtime.width / 2, runtime.height / 2 - 18);
-      context.fillStyle = "#bae6fd";
-      fitCanvasText(valueText, overlayMaxWidth, 42, 30, 900);
-      context.fillText(valueText, runtime.width / 2, runtime.height / 2 + 36);
-      context.fillStyle = "#cbd5e1";
-      fitCanvasText(detailText, overlayMaxWidth, 13, 10, 800);
-      context.fillText(detailText, runtime.width / 2, runtime.height / 2 + 68);
-      context.restore();
-    };
-
-    const update = (runtime: GameRuntime, time: number) => {
-      const delta = Math.min(32, time - runtime.lastTimestamp || 16);
-      runtime.lastTimestamp = time;
-
-      if (runtime.active) {
-        const elapsed = (time - runtime.startedAt) / 1000;
-        runtime.timeLeft = Math.max(0, gameDuration - elapsed);
-        runtime.difficulty = Math.min(4.2, 1 + runtime.score / 900 + elapsed / 90);
-        if (time > runtime.comboExpiresAt) runtime.combo = 0;
-
-        runtime.particles.forEach((particle) => {
-          particle.angle += (particle.speed * delta) / 1000;
-          particle.size = Math.max(8.5, particle.size - runtime.difficulty * 0.0008);
-        });
-
-        const desiredCount = Math.min(10, 5 + Math.floor(runtime.score / 450));
-        while (runtime.particles.length < desiredCount) {
-          runtime.particles.push(createOrbitParticle(runtime.nextId++, runtime.width, runtime.height, runtime.difficulty));
-        }
-
-        if (runtime.timeLeft <= 0) {
-          runtime.active = false;
-          runtime.finished = true;
-          spawnBurst(runtime.width / 2, runtime.height / 2, "#67e8f9", 48);
-          playTone(360, 0.12, 0.035);
-          syncHud();
-        }
-      }
-
-      runtime.bursts = runtime.bursts
-        .map((particle) => ({
-          ...particle,
-          x: particle.x + particle.vx,
-          y: particle.y + particle.vy,
-          vx: particle.vx * 0.97,
-          vy: particle.vy * 0.97,
-          life: particle.life - 1,
-        }))
-        .filter((particle) => particle.life > 0);
-    };
-
-    const render = (time: number) => {
-      const runtime = runtimeRef.current;
-      resize();
-      update(runtime, time);
-      drawBackground(runtime, time);
-      drawAtom(runtime);
-      runtime.particles.forEach((particle) => drawOrbitParticle(runtime, particle));
-      drawBursts(runtime);
-      drawOverlay(runtime);
-      if (Math.floor(time / 200) !== Math.floor((time - 16) / 200)) syncHud();
-      animationFrame = requestAnimationFrame(render);
-    };
-
-    const pointerToCanvas = (event: PointerEvent) => {
       const rect = canvas.getBoundingClientRect();
-      const runtime = runtimeRef.current;
-      const x = event.clientX - rect.left;
-      const y = event.clientY - rect.top;
-      runtime.pointer = {
-        x,
-        y,
-        parallaxX: (x / Math.max(1, runtime.width) - 0.5) * 2,
-        parallaxY: (y / Math.max(1, runtime.height) - 0.5) * 2,
-        active: true,
-      };
+      const width = rect.width;
+      const height = rect.height;
+
+      // Clear & Draw Cyber Grid Background
+      ctx.fillStyle = "#060a18";
+      ctx.fillRect(0, 0, width, height);
+
+      // Cyber Grid Lines
+      ctx.strokeStyle = "rgba(56, 189, 248, 0.07)";
+      ctx.lineWidth = 1;
+      const gridSize = 40;
+      for (let x = 0; x < width; x += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, height);
+        ctx.stroke();
+      }
+      for (let y = 0; y < height; y += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(width, y);
+        ctx.stroke();
+      }
+
+      if (isPlayingRef.current) {
+        // Spawn New Targets
+        if (currentTime - lastSpawnTimeRef.current > 650) {
+          lastSpawnTimeRef.current = currentTime;
+          const isBug = Math.random() < 0.38; // 38% chance bug, 62% tech stack
+          const item = isBug
+            ? bugItems[Math.floor(Math.random() * bugItems.length)]
+            : techItems[Math.floor(Math.random() * techItems.length)];
+
+          const spawnEdge = Math.random();
+          let x = 0;
+          let y = 0;
+          let vx = 0;
+          let vy = 0;
+
+          if (spawnEdge < 0.4) {
+            // From Top
+            x = 40 + Math.random() * (width - 80);
+            y = -30;
+            vx = (Math.random() - 0.5) * 120;
+            vy = 120 + Math.random() * 140;
+          } else if (spawnEdge < 0.7) {
+            // From Left
+            x = -30;
+            y = 40 + Math.random() * (height - 100);
+            vx = 140 + Math.random() * 120;
+            vy = (Math.random() - 0.5) * 100;
+          } else {
+            // From Right
+            x = width + 30;
+            y = 40 + Math.random() * (height - 100);
+            vx = -(140 + Math.random() * 120);
+            vy = (Math.random() - 0.5) * 100;
+          }
+
+          entitiesRef.current.push({
+            id: nextIdRef.current++,
+            type: isBug ? "bug" : "tech",
+            name: item.name,
+            iconText: item.iconText,
+            x,
+            y,
+            vx,
+            vy,
+            radius: 28,
+            color: item.color,
+            glowColor: item.glow,
+            points: item.points,
+            isBug,
+          });
+        }
+
+        // Combo Expiry Check
+        if (currentTime > comboExpiresAtRef.current && comboRef.current > 0) {
+          comboRef.current = 0;
+          setCombo(0);
+        }
+      }
+
+      // Update & Draw Entities
+      entitiesRef.current = entitiesRef.current.filter((ent) => {
+        ent.x += ent.vx * dt;
+        ent.y += ent.vy * dt;
+
+        // Draw Entity Badge
+        ctx.save();
+        ctx.translate(ent.x, ent.y);
+
+        // Neon Glow Halo
+        ctx.shadowColor = ent.glowColor;
+        ctx.shadowBlur = 18;
+
+        // Circular Frosted Base
+        ctx.beginPath();
+        ctx.arc(0, 0, ent.radius, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(10, 16, 36, 0.88)";
+        ctx.fill();
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = ent.color;
+        ctx.stroke();
+
+        // Icon Emoji / Text
+        ctx.shadowBlur = 0;
+        ctx.font = "20px Inter, sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(ent.iconText, 0, -2);
+
+        // Tech Name Badge
+        ctx.font = "bold 9px Inter, sans-serif";
+        ctx.fillStyle = "#ffffff";
+        ctx.fillText(ent.name, 0, 16);
+
+        ctx.restore();
+
+        // Remove if off screen
+        return ent.x > -60 && ent.x < width + 60 && ent.y > -60 && ent.y < height + 60;
+      });
+
+      // Update & Draw Particles
+      particlesRef.current = particlesRef.current.filter((p) => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.life -= 1 / p.maxLife;
+
+        if (p.life <= 0) return false;
+
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, p.life);
+        ctx.fillStyle = p.color;
+        ctx.shadowColor = p.color;
+        ctx.shadowBlur = 8;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+        return true;
+      });
+
+      // Update & Draw Floating Texts
+      floatingTextsRef.current = floatingTextsRef.current.filter((ft) => {
+        ft.y -= 45 * dt;
+        ft.opacity -= 0.025;
+
+        if (ft.opacity <= 0) return false;
+
+        ctx.save();
+        ctx.globalAlpha = ft.opacity;
+        ctx.font = "900 16px Inter, sans-serif";
+        ctx.fillStyle = ft.color;
+        ctx.shadowColor = ft.color;
+        ctx.shadowBlur = 12;
+        ctx.textAlign = "center";
+        ctx.fillText(ft.text, ft.x, ft.y);
+        ctx.restore();
+        return true;
+      });
+
+      animationFrameId = requestAnimationFrame(loop);
     };
 
-    const handlePointerMove = (event: PointerEvent) => pointerToCanvas(event);
-    const handlePointerDown = (event: PointerEvent) => {
-      pointerToCanvas(event);
-      handleHitTest(event);
-    };
-    const handlePointerLeave = () => {
-      runtimeRef.current.pointer.active = false;
-      runtimeRef.current.pointer.parallaxX = 0;
-      runtimeRef.current.pointer.parallaxY = 0;
-    };
-
-    resize();
-    animationFrame = requestAnimationFrame(render);
-    canvas.addEventListener("pointermove", handlePointerMove);
-    canvas.addEventListener("pointerdown", handlePointerDown);
-    canvas.addEventListener("pointerleave", handlePointerLeave);
-    window.addEventListener("resize", resize);
-
+    animationFrameId = requestAnimationFrame(loop);
     return () => {
-      cancelAnimationFrame(animationFrame);
-      canvas.removeEventListener("pointermove", handlePointerMove);
-      canvas.removeEventListener("pointerdown", handlePointerDown);
-      canvas.removeEventListener("pointerleave", handlePointerLeave);
-      window.removeEventListener("resize", resize);
+      cancelAnimationFrame(animationFrameId);
+      window.removeEventListener("resize", handleResize);
     };
-  }, [handleHitTest, playTone, spawnBurst, syncHud]);
+  }, []);
+
+  // Timer countdown
+  useEffect(() => {
+    if (gameState !== "playing") return;
+
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          isPlayingRef.current = false;
+          setGameState("gameover");
+
+          // Save High Score
+          const currentScore = scoreRef.current;
+          if (currentScore > highScore) {
+            setHighScore(currentScore);
+            try {
+              localStorage.setItem(STORAGE_KEY, String(currentScore));
+            } catch {
+              // Ignore storage errors
+            }
+          }
+          playSound("gameover");
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [gameState, highScore, playSound]);
+
+  // Click & Hit Detection Handler
+  const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    if (gameState !== "playing") return;
+
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const rect = canvas.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const clickY = e.clientY - rect.top;
+
+    let hit = false;
+
+    entitiesRef.current = entitiesRef.current.filter((ent) => {
+      const dist = Math.hypot(ent.x - clickX, ent.y - clickY);
+      if (dist <= ent.radius + 14 && !hit) {
+        hit = true;
+
+        // Hit Success!
+        comboRef.current += 1;
+        comboExpiresAtRef.current = performance.now() + 1800; // 1.8s combo window
+        setCombo(comboRef.current);
+
+        const comboMultiplier = 1 + Math.min(comboRef.current - 1, 8) * 0.2;
+        const awardedPoints = Math.round(ent.points * comboMultiplier);
+        scoreRef.current += awardedPoints;
+        setScore(scoreRef.current);
+
+        if (ent.isBug) {
+          bugsRef.current += 1;
+          setBugsSquashed(bugsRef.current);
+          playSound("zap");
+          addFloatingText(`+${awardedPoints} BUG FIXED! 🐛`, ent.x, ent.y - 15, "#ef4444");
+        } else {
+          techRef.current += 1;
+          setTechCollected(techRef.current);
+          playSound(comboRef.current > 3 ? "combo" : "pop");
+          addFloatingText(`+${awardedPoints} ${ent.name}!`, ent.x, ent.y - 15, ent.color);
+        }
+
+        spawnExplosion(ent.x, ent.y, ent.color, 22);
+        return false; // Remove entity
+      }
+      return true;
+    });
+  };
 
   return (
-    <section id="game-zone" className="code-orbit-section section-padding relative overflow-hidden">
-      <div className="code-orbit-ambient code-orbit-ambient-one" />
-      <div className="code-orbit-ambient code-orbit-ambient-two" />
+    <section id="game-zone" className="section-padding relative overflow-hidden">
+      {/* Background ambient lighting */}
+      <div className="pointer-events-none absolute -left-48 top-1/4 size-96 rounded-full bg-cyan-500/10 blur-[150px]" />
+      <div className="pointer-events-none absolute -right-48 bottom-1/4 size-96 rounded-full bg-purple-500/10 blur-[150px]" />
+
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <SectionHeader eyebrow="Interactive Lab" title="Code Orbit Challenge" description="A compact neon reflex game built into the portfolio experience." />
+        <SectionHeader
+          eyebrow="Interactive Developer Arcade"
+          title="Bug Hunter & Tech Stack Smasher"
+          description="A fast-paced developer reflex game built directly into the portfolio. Squash bugs, collect MERN tech stacks, build combos, and climb the developer ranks!"
+        />
 
-        <div className="code-orbit-shell">
-          <motion.div className="code-orbit-stage" initial={{ opacity: 0, y: 26 }} viewport={{ once: true, margin: "-80px" }} whileInView={{ opacity: 1, y: 0 }}>
-            <div className="code-orbit-hud">
-              <div>
-                <FiTarget />
-                <span>Score</span>
-                <strong>{hud.score}</strong>
-              </div>
-              <div>
-                <FiZap />
-                <span>Combo</span>
-                <strong>{hud.combo}x</strong>
-              </div>
-              <div>
-                <FiClock />
-                <span>Time</span>
-                <strong>{hud.timeLeft}s</strong>
-              </div>
-              <div>
-                <FiActivity />
-                <span>Level</span>
-                <strong>{hud.difficulty.toFixed(1)}x</strong>
-              </div>
-            </div>
-
-            <canvas ref={canvasRef} className="code-orbit-canvas" aria-label="Code Orbit Challenge canvas game" />
-
-            <div className="code-orbit-controls">
-              <motion.button type="button" onClick={startGame} whileHover={{ y: -2 }} whileTap={{ scale: 0.96 }}>
-                {hud.active ? <FiRefreshCw /> : <FiPlay />}
-                {hud.active ? "Restart" : hud.finished ? "Replay" : "Launch"}
-              </motion.button>
-              <motion.button type="button" onClick={toggleSound} whileHover={{ y: -2 }} whileTap={{ scale: 0.96 }}>
-                {soundEnabled ? <FiVolume2 /> : <FiVolumeX />}
-                Sound
-              </motion.button>
-            </div>
-          </motion.div>
-
-          <motion.aside className="code-orbit-panel" initial={{ opacity: 0, y: 26 }} viewport={{ once: true, margin: "-80px" }} whileInView={{ opacity: 1, y: 0 }}>
-            <div className="code-orbit-level-card">
-              <span>Developer Skill Level</span>
-              <strong>{hud.skillLevel}</strong>
-              <small>High score {hud.highScore}</small>
-            </div>
-
-            <div className="code-orbit-achievement-card">
-              <div className="code-orbit-panel-title">
-                <FiAward />
+        {/* Main Arcade Cabinet Container */}
+        <div className="relative overflow-hidden rounded-3xl border border-white/20 bg-gradient-to-b from-[#060a1a]/95 via-[#080d24]/90 to-[#040714]/95 p-5 sm:p-8 backdrop-blur-3xl shadow-[0_25px_60px_rgba(0,0,0,0.7)]">
+          {/* Top Arcade HUD Header */}
+          <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-5 mb-5">
+            <div className="flex flex-wrap items-center gap-4">
+              {/* Score Display */}
+              <div className="flex items-center gap-2.5 rounded-2xl border border-cyan-400/40 bg-cyan-950/60 px-4 py-2 shadow-[0_0_20px_rgba(34,211,238,0.25)]">
+                <FiTarget className="text-cyan-400 text-lg" />
                 <div>
-                  <span>Achievements</span>
-                  <strong>{unlockedAchievements.length} / {achievementCatalog.length}</strong>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-cyan-300 block">Score</span>
+                  <span className="text-xl sm:text-2xl font-black text-white">{score}</span>
                 </div>
               </div>
-              <div className="code-orbit-badges">
-                {achievementCatalog.map((achievement) => {
-                  const Icon = achievement.icon;
-                  const unlocked = hud.achievements.includes(achievement.id);
-                  return (
-                    <motion.div
-                      key={achievement.id}
-                      animate={unlocked ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0.52, y: 0, scale: 1 }}
-                      className={unlocked ? "is-unlocked" : ""}
-                      title={achievement.description}
-                    >
-                      <Icon />
-                      <span>{achievement.label}</span>
-                    </motion.div>
-                  );
-                })}
+
+              {/* Combo Multiplier */}
+              <div className="flex items-center gap-2.5 rounded-2xl border border-purple-400/40 bg-purple-950/60 px-4 py-2 shadow-[0_0_20px_rgba(168,85,247,0.25)]">
+                <FiZap className="text-purple-400 text-lg" />
+                <div>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-purple-300 block">Combo</span>
+                  <span className="text-xl sm:text-2xl font-black text-white">{combo > 0 ? `${combo}x` : "1x"}</span>
+                </div>
+              </div>
+
+              {/* Countdown Timer */}
+              <div className="flex items-center gap-2.5 rounded-2xl border border-emerald-400/40 bg-emerald-950/60 px-4 py-2 shadow-[0_0_20px_rgba(52,211,153,0.25)]">
+                <FiClock className="text-emerald-400 text-lg" />
+                <div>
+                  <span className="text-[10px] font-black uppercase tracking-widest text-emerald-300 block">Time Left</span>
+                  <span className="text-xl sm:text-2xl font-black text-white">{timeLeft}s</span>
+                </div>
               </div>
             </div>
 
-            <AnimatePresence mode="wait">
-              {hud.finished ? (
-                <motion.div
-                  key="result"
-                  animate={{ opacity: 1, y: 0 }}
-                  className="code-orbit-result-card"
-                  exit={{ opacity: 0, y: -10 }}
-                  initial={{ opacity: 0, y: 14 }}
+            {/* Controls */}
+            <div className="flex items-center gap-2.5">
+              <button
+                type="button"
+                onClick={() => setSoundEnabled((prev) => !prev)}
+                className="flex size-10 items-center justify-center rounded-xl border border-white/15 bg-white/5 text-slate-300 hover:text-cyan-300 hover:border-cyan-400/50 hover:bg-white/10 transition-all cursor-pointer"
+                title={soundEnabled ? "Mute Sound" : "Enable Sound"}
+              >
+                {soundEnabled ? <FiVolume2 className="text-lg" /> : <FiVolumeX className="text-lg" />}
+              </button>
+
+              {gameState === "playing" ? (
+                <button
+                  type="button"
+                  onClick={startGame}
+                  className="flex items-center gap-2 rounded-xl border border-amber-400/50 bg-amber-500/20 px-4 py-2.5 text-xs font-black text-amber-300 hover:bg-amber-500/30 transition-all cursor-pointer shadow-[0_0_15px_rgba(251,191,36,0.3)]"
                 >
-                  <span>Final Score</span>
-                  <strong>{hud.score}</strong>
-                  <small>{hud.skillLevel}</small>
-                  <button type="button" onClick={startGame}>
-                    <FiRefreshCw /> Replay
-                  </button>
+                  <FiRefreshCw /> Restart
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={startGame}
+                  className="primary-button py-2.5 px-6 text-sm font-black shadow-[0_8px_25px_rgba(34,211,238,0.4)]"
+                >
+                  <FiPlay /> {gameState === "gameover" ? "Play Again" : "Start Game"}
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Interactive Game Canvas Arena */}
+          <div className="relative h-[24rem] sm:h-[28rem] w-full overflow-hidden rounded-2xl border border-white/15 bg-[#030612] cursor-crosshair">
+            <canvas
+              ref={canvasRef}
+              onClick={handleCanvasClick}
+              className="size-full"
+              aria-label="Developer Arcade Arena"
+            />
+
+            {/* Start Screen Overlay */}
+            <AnimatePresence>
+              {gameState === "idle" && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-slate-950/85 backdrop-blur-md p-6 text-center"
+                >
+                  <div className="flex size-16 items-center justify-center rounded-2xl border border-cyan-400/50 bg-cyan-500/10 text-cyan-300 text-3xl mb-4 shadow-[0_0_30px_rgba(34,211,238,0.4)]">
+                    <FiZap />
+                  </div>
+                  <h3 className="text-2xl sm:text-3xl font-black text-white">Developer Bug Hunter Arcade</h3>
+                  <p className="mt-2 max-w-md text-xs sm:text-sm text-slate-300">
+                    Click & smash flying 🐛 Bugs (+200 pts) and collect ⚛️ MERN Tech Stacks (+100 pts). Chain hits together for massive combo streaks before time runs out!
+                  </p>
+                  <motion.button
+                    type="button"
+                    onClick={startGame}
+                    className="primary-button mt-6 px-8 py-3.5 text-base font-black shadow-[0_12px_32px_rgba(34,211,238,0.4)] cursor-pointer"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <FiPlay className="text-lg" /> Launch Game (45s)
+                  </motion.button>
                 </motion.div>
-              ) : null}
+              )}
+
+              {/* Game Over Modal Overlay */}
+              {gameState === "gameover" && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-slate-950/90 backdrop-blur-lg p-6 text-center"
+                >
+                  <div className="flex size-16 items-center justify-center rounded-2xl border border-emerald-400/50 bg-emerald-500/10 text-emerald-300 text-3xl mb-3 shadow-[0_0_30px_rgba(52,211,153,0.4)]">
+                    <FiAward />
+                  </div>
+                  <span className="text-xs font-black uppercase tracking-widest text-emerald-300">Game Over!</span>
+                  <h3 className="mt-1 text-3xl sm:text-4xl font-black text-white">{score} Points</h3>
+                  <span className="mt-2 inline-block rounded-xl border border-cyan-400/40 bg-cyan-950/80 px-4 py-1.5 text-sm font-black text-cyan-200 shadow-[0_0_15px_rgba(34,211,238,0.3)]">
+                    🎖️ Rank: {getRank(score)}
+                  </span>
+
+                  <div className="mt-5 grid grid-cols-3 gap-3 w-full max-w-sm text-xs">
+                    <div className="rounded-xl border border-white/10 bg-white/5 p-2.5">
+                      <span className="text-slate-400 block text-[10px] uppercase">Bugs Fixed</span>
+                      <strong className="text-base text-red-400">{bugsSquashed} 🐛</strong>
+                    </div>
+                    <div className="rounded-xl border border-white/10 bg-white/5 p-2.5">
+                      <span className="text-slate-400 block text-[10px] uppercase">Tech Stack</span>
+                      <strong className="text-base text-cyan-300">{techCollected} ⚛️</strong>
+                    </div>
+                    <div className="rounded-xl border border-white/10 bg-white/5 p-2.5">
+                      <span className="text-slate-400 block text-[10px] uppercase">High Score</span>
+                      <strong className="text-base text-amber-300">{highScore}</strong>
+                    </div>
+                  </div>
+
+                  <motion.button
+                    type="button"
+                    onClick={startGame}
+                    className="primary-button mt-6 px-8 py-3 text-sm font-black shadow-[0_10px_30px_rgba(34,211,238,0.4)] cursor-pointer"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <FiRefreshCw className="text-base" /> Play Again
+                  </motion.button>
+                </motion.div>
+              )}
             </AnimatePresence>
-          </motion.aside>
+          </div>
+
+          {/* Bottom Telemetry & Achievements Matrix */}
+          <div className="mt-6 grid gap-4 sm:grid-cols-3 border-t border-white/10 pt-5">
+            <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-3.5 backdrop-blur-md">
+              <div className="flex size-10 items-center justify-center rounded-xl bg-red-500/15 text-red-400 text-lg">
+                <FaBug />
+              </div>
+              <div>
+                <span className="text-[10px] font-bold text-slate-400 uppercase">Bug Smasher</span>
+                <p className="text-xs font-semibold text-slate-200">Destroy 🐛 bugs to gain +200 pts</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-3.5 backdrop-blur-md">
+              <div className="flex size-10 items-center justify-center rounded-xl bg-cyan-500/15 text-cyan-300 text-lg">
+                <FaReact />
+              </div>
+              <div>
+                <span className="text-[10px] font-bold text-slate-400 uppercase">Tech Collector</span>
+                <p className="text-xs font-semibold text-slate-200">Catch ⚛️ MERN stacks for combos</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 p-3.5 backdrop-blur-md">
+              <div className="flex size-10 items-center justify-center rounded-xl bg-amber-500/15 text-amber-300 text-lg">
+                <FiAward />
+              </div>
+              <div>
+                <span className="text-[10px] font-bold text-slate-400 uppercase">Personal Best</span>
+                <p className="text-xs font-semibold text-slate-200">High Score: <strong className="text-amber-300">{highScore} pts</strong></p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>

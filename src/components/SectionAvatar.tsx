@@ -1,12 +1,14 @@
-import { useRef } from "react";
+import { useRef, useMemo, Suspense } from "react";
 import type { CSSProperties } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, useLoader } from "@react-three/fiber";
+import { Float, Sparkles } from "@react-three/drei";
+import * as THREE from "three";
+import { SVGLoader } from "three/examples/jsm/loaders/SVGLoader.js";
 import { motion } from "framer-motion";
 import type { IconType } from "react-icons";
 import clsx from "clsx";
 import {
   FiAward,
-  FiBarChart2,
   FiBookOpen,
   FiBriefcase,
   FiCheckCircle,
@@ -16,15 +18,14 @@ import {
   FiLayers,
   FiMail,
   FiMonitor,
-  FiMousePointer,
   FiSend,
   FiServer,
   FiUser,
+  FiZap,
 } from "react-icons/fi";
 import { FaGraduationCap, FaMedal, FaNodeJs, FaReact } from "react-icons/fa";
-import { SiMongodb, SiTypescript, SiVercel } from "react-icons/si";
-import type { Group } from "three";
-import { useMouseParallax } from "../hooks/useMouseParallax";
+import { SiMongodb, SiTypescript, SiVercel, SiNextdotjs } from "react-icons/si";
+import mtMonogramUrl from "../assets/mt-monogram.svg";
 
 export type SectionAvatarVariant =
   | "about"
@@ -47,354 +48,382 @@ interface SectionAvatarProps {
 interface AvatarConfig {
   eyebrow: string;
   title: string;
-  role: string;
   accent: string;
   secondary: string;
-  outfit: string;
   icon: IconType;
-  orbitIcons: IconType[];
-  consoleLabels: string[];
+  chips: string[];
 }
 
 const avatarConfig: Record<SectionAvatarVariant, AvatarConfig> = {
   about: {
-    eyebrow: "Introduction",
-    title: "Personal briefing",
-    role: "Developer host",
+    eyebrow: "DEVELOPER TELEMETRY",
+    title: "Full Stack Engineer",
     accent: "#38bdf8",
-    secondary: "#a78bfa",
-    outfit: "presenter",
+    secondary: "#a855f7",
     icon: FiUser,
-    orbitIcons: [FiUser, FiCheckCircle, FiCode],
-    consoleLabels: ["Profile", "Values", "MERN"],
+    chips: ["MERN Architecture", "Next.js Core", "AI Integration"],
   },
   education: {
-    eyebrow: "Academic lab",
-    title: "Study desk",
-    role: "Student engineer",
+    eyebrow: "ACADEMIC MATRIX",
+    title: "Computer Science Hub",
     accent: "#facc15",
     secondary: "#38bdf8",
-    outfit: "student",
-    icon: FiBookOpen,
-    orbitIcons: [FaGraduationCap, FiBookOpen, FiAward],
-    consoleLabels: ["Degree", "Coursework", "Timeline"],
+    icon: FaGraduationCap,
+    chips: ["B.Sc Computer Science", "Graduation 2026", "Software Engineering"],
   },
   skills: {
-    eyebrow: "Engineering bay",
-    title: "Multi-screen coding",
-    role: "Elite software engineer",
+    eyebrow: "ENGINEERING STACK",
+    title: "Core Technology Core",
     accent: "#34d399",
     secondary: "#22d3ee",
-    outfit: "engineer",
     icon: FiCpu,
-    orbitIcons: [FaReact, FaNodeJs, SiMongodb, SiTypescript],
-    consoleLabels: ["Frontend", "Backend", "Cloud"],
+    chips: ["Frontend Mastery", "Backend APIs", "Database Design"],
   },
   projects: {
-    eyebrow: "Product studio",
-    title: "Hologram builder",
-    role: "Product developer",
+    eyebrow: "PRODUCTION LAB",
+    title: "Full Stack Systems",
     accent: "#60a5fa",
     secondary: "#f472b6",
-    outfit: "builder",
     icon: FiLayers,
-    orbitIcons: [FiMonitor, FiLayers, FiMousePointer],
-    consoleLabels: ["Prototype", "Launch", "Scale"],
+    chips: ["LMS Platform", "Lumina E-Commerce", "Swastik Portal"],
   },
   achievements: {
-    eyebrow: "Proof vault",
-    title: "Certificate unlocks",
-    role: "Achievement lead",
+    eyebrow: "VERIFIED PROOF",
+    title: "Capabilities Vault",
     accent: "#f59e0b",
     secondary: "#fb7185",
-    outfit: "formal",
     icon: FaMedal,
-    orbitIcons: [FaMedal, FiAward, FiFileText],
-    consoleLabels: ["Badges", "Certificates", "Stats"],
+    chips: ["12+ Live Projects", "Production Ready", "1200+ Coding Hrs"],
   },
   experience: {
-    eyebrow: "Delivery room",
-    title: "Work dashboard",
-    role: "Professional engineer",
+    eyebrow: "DELIVERY PIPELINE",
+    title: "Full Stack Lifecycle",
     accent: "#2dd4bf",
     secondary: "#818cf8",
-    outfit: "work",
     icon: FiBriefcase,
-    orbitIcons: [FiBriefcase, FiBarChart2, FiServer],
-    consoleLabels: ["API", "Dashboards", "Deploy"],
+    chips: ["MERN Stack", "REST APIs", "Cloud CI/CD"],
   },
   contact: {
-    eyebrow: "Communication desk",
-    title: "Message console",
-    role: "Friendly contact host",
+    eyebrow: "COMMUNICATION NODE",
+    title: "Transmitter Console",
     accent: "#38bdf8",
     secondary: "#34d399",
-    outfit: "contact",
     icon: FiMail,
-    orbitIcons: [FiMail, FiSend, SiVercel],
-    consoleLabels: ["Email", "Social", "Reply"],
+    chips: ["Direct Email", "Quick Response", "Open to Hire"],
   },
 };
 
-function AvatarEnvironment({ accent, secondary }: { accent: string; secondary: string }) {
-  return (
-    <Canvas className="character-r3f" camera={{ position: [0, 0, 5.5], fov: 48 }} dpr={[1, 1.25]}>
-      <ambientLight intensity={0.7} />
-      <pointLight color={accent} intensity={2.4} position={[2.6, 2.2, 3]} />
-      <pointLight color={secondary} intensity={1.6} position={[-2.5, -1.7, 2.5]} />
-      <HologramRig accent={accent} secondary={secondary} />
-    </Canvas>
-  );
-}
+const LOGO_SCALE = 0.0075;
 
-function HologramRig({ accent, secondary }: { accent: string; secondary: string }) {
-  const group = useRef<Group>(null);
+// 3D Extruded MT Logo Component inside the Holographic Stage
+function Stage3DMTLogo({ accent, secondary }: { accent: string; secondary: string }) {
+  const svg = useLoader(SVGLoader, mtMonogramUrl);
+  const groupRef = useRef<THREE.Group>(null);
+
+  const materials = useMemo(
+    () => [
+      // 0: Deep space disc
+      new THREE.MeshPhysicalMaterial({
+        color: "#080d1e",
+        emissive: "#0f172a",
+        emissiveIntensity: 0.5,
+        metalness: 0.9,
+        roughness: 0.15,
+        clearcoat: 1,
+      }),
+      // 1: Inner ring border
+      new THREE.MeshPhysicalMaterial({
+        color: "#0f172a",
+        emissive: accent,
+        emissiveIntensity: 0.5,
+        metalness: 0.9,
+        roughness: 0.1,
+        clearcoat: 1,
+      }),
+      // 2: Outer neon accent arc
+      new THREE.MeshPhysicalMaterial({
+        color: accent,
+        emissive: accent,
+        emissiveIntensity: 2.0,
+        metalness: 0.6,
+        roughness: 0.05,
+        clearcoat: 1,
+      }),
+      // 3: Outer neon secondary arc
+      new THREE.MeshPhysicalMaterial({
+        color: secondary,
+        emissive: secondary,
+        emissiveIntensity: 1.8,
+        metalness: 0.6,
+        roughness: 0.05,
+        clearcoat: 1,
+      }),
+      // 4: "M" Letter Face
+      new THREE.MeshPhysicalMaterial({
+        color: accent,
+        emissive: accent,
+        emissiveIntensity: 1.4,
+        metalness: 0.88,
+        roughness: 0.08,
+        clearcoat: 1,
+      }),
+      // 5: "M" Letter Shade
+      new THREE.MeshPhysicalMaterial({
+        color: "#1e293b",
+        emissive: "#0f172a",
+        emissiveIntensity: 0.6,
+        metalness: 0.9,
+        roughness: 0.1,
+        clearcoat: 1,
+      }),
+      // 6: "T" Letter Face (Brilliant Silver-White)
+      new THREE.MeshPhysicalMaterial({
+        color: "#ffffff",
+        emissive: "#f0f9ff",
+        emissiveIntensity: 1.1,
+        metalness: 0.95,
+        roughness: 0.04,
+        clearcoat: 1,
+      }),
+      // 7: Highlight Accent
+      new THREE.MeshPhysicalMaterial({
+        color: accent,
+        emissive: accent,
+        emissiveIntensity: 1.0,
+        metalness: 0.5,
+        roughness: 0.06,
+        transparent: true,
+        opacity: 0.85,
+      }),
+      // 8: Top White Highlight
+      new THREE.MeshPhysicalMaterial({
+        color: "#ffffff",
+        emissive: "#ffffff",
+        emissiveIntensity: 0.9,
+        metalness: 0.5,
+        roughness: 0.05,
+        transparent: true,
+        opacity: 0.95,
+      }),
+    ],
+    [accent, secondary],
+  );
+
+  const pieces = useMemo(() => {
+    const extrude = {
+      bevelEnabled: true,
+      bevelSegments: 5,
+      bevelSize: 2.2,
+      bevelThickness: 2.4,
+      curveSegments: 48,
+      depth: 14,
+    };
+
+    const totalPaths = svg.paths.length;
+    const midOffset = (totalPaths * 0.9) / 2;
+
+    return svg.paths.flatMap((path, pathIndex) =>
+      SVGLoader.createShapes(path).map((shape, shapeIndex) => {
+        const geometry = new THREE.ExtrudeGeometry(shape, extrude);
+        geometry.translate(-256, -256, 0);
+        geometry.computeVertexNormals();
+
+        return {
+          geometry,
+          materialIndex: Math.min(pathIndex, materials.length - 1),
+          offset: pathIndex * 0.9 - midOffset,
+          key: `${pathIndex}-${shapeIndex}`,
+        };
+      }),
+    );
+  }, [materials.length, svg.paths]);
 
   useFrame((_, delta) => {
-    if (!group.current) return;
-    group.current.rotation.y += delta * 0.32;
-    group.current.rotation.x = Math.sin(Date.now() * 0.0008) * 0.12;
+    if (!groupRef.current) return;
+    // Smooth 3D rotation of the MT Logo
+    groupRef.current.rotation.y += delta * 0.55;
   });
 
   return (
-    <group ref={group}>
-      <mesh position={[0, 0, -1.2]} rotation={[1.15, 0, 0]}>
-        <torusGeometry args={[1.95, 0.018, 12, 120]} />
-        <meshStandardMaterial color={accent} emissive={accent} emissiveIntensity={1.15} transparent opacity={0.56} />
-      </mesh>
-      <mesh position={[0, 0, -1.05]} rotation={[1.25, 0.35, 0.2]}>
-        <torusGeometry args={[1.28, 0.014, 12, 100]} />
-        <meshStandardMaterial color={secondary} emissive={secondary} emissiveIntensity={1} transparent opacity={0.5} />
-      </mesh>
-      {[-1.35, -0.45, 0.55, 1.38].map((x, index) => (
-        <mesh key={x} position={[x, Math.sin(index) * 0.42, -0.65]}>
-          <sphereGeometry args={[0.055 + index * 0.008, 14, 14]} />
-          <meshStandardMaterial color={index % 2 ? secondary : accent} emissive={index % 2 ? secondary : accent} emissiveIntensity={1.9} />
-        </mesh>
-      ))}
+    <group ref={groupRef} position={[0, 0, 0]}>
+      <group scale={[LOGO_SCALE, -LOGO_SCALE, LOGO_SCALE]}>
+        {pieces.map((piece) => (
+          <mesh
+            key={piece.key}
+            castShadow
+            receiveShadow
+            geometry={piece.geometry}
+            material={materials[piece.materialIndex]}
+            position={[0, 0, piece.offset]}
+          />
+        ))}
+      </group>
     </group>
   );
 }
 
-function CharacterHead({ variant, focusLabel }: { variant: SectionAvatarVariant; focusLabel: string }) {
+// Surrounding 3D Hologram Rings and Aura
+function Stage3DHologram({ accent, secondary }: { accent: string; secondary: string }) {
+  const ring1 = useRef<THREE.Mesh>(null);
+  const ring2 = useRef<THREE.Mesh>(null);
+  const wireframeRef = useRef<THREE.Mesh>(null);
+
+  useFrame(({ clock }, delta) => {
+    const t = clock.elapsedTime;
+    if (ring1.current) {
+      ring1.current.rotation.z += delta * 0.75;
+      ring1.current.rotation.x = Math.sin(t * 0.6) * 0.25 + 1.1;
+    }
+    if (ring2.current) {
+      ring2.current.rotation.z -= delta * 0.6;
+      ring2.current.rotation.y = Math.cos(t * 0.5) * 0.25 - 0.9;
+    }
+    if (wireframeRef.current) {
+      wireframeRef.current.rotation.y -= delta * 0.3;
+      wireframeRef.current.rotation.z += delta * 0.15;
+    }
+  });
+
   return (
-    <div className="character-head">
-      <div className="character-hair" />
-      <div className="character-face">
-        <span className="character-brow left" />
-        <span className="character-brow right" />
-        <span className="character-eye left">
-          <i />
-        </span>
-        <span className="character-eye right">
-          <i />
-        </span>
-        <span className={clsx("character-mouth", variant === "contact" && "is-friendly", focusLabel !== "Idle" && "is-reacting")} />
-        {variant === "contact" || variant === "about" ? <span className="character-cheek" /> : null}
-      </div>
-    </div>
+    <group>
+      {/* Outer 3D Geometric Cyber Shell */}
+      <mesh ref={wireframeRef}>
+        <icosahedronGeometry args={[1.5, 1]} />
+        <meshStandardMaterial
+          color={secondary}
+          emissive={secondary}
+          emissiveIntensity={1.2}
+          wireframe
+          transparent
+          opacity={0.35}
+        />
+      </mesh>
+
+      {/* Orbiting Laser Torus Rings */}
+      <mesh ref={ring1} rotation={[1.1, 0.2, 0]}>
+        <torusGeometry args={[1.9, 0.02, 16, 100]} />
+        <meshStandardMaterial color={accent} emissive={accent} emissiveIntensity={2.5} transparent opacity={0.8} />
+      </mesh>
+      <mesh ref={ring2} rotation={[-0.9, 0.4, 0]}>
+        <torusGeometry args={[2.1, 0.016, 16, 100]} />
+        <meshStandardMaterial color={secondary} emissive={secondary} emissiveIntensity={2.2} transparent opacity={0.75} />
+      </mesh>
+
+      {/* 3D MT Logo in Dead Center */}
+      <Stage3DMTLogo accent={accent} secondary={secondary} />
+
+      {/* Ambient Stardust */}
+      <Sparkles count={40} scale={[4.0, 4.0, 4.0]} size={1.8} speed={0.8} color={accent} />
+      <Sparkles count={25} scale={[3.6, 3.6, 3.6]} size={1.4} speed={0.6} color={secondary} />
+    </group>
   );
 }
 
-function Workstation({ variant, focusLabel, labels }: { variant: SectionAvatarVariant; focusLabel: string; labels: string[] }) {
-  if (variant === "about") {
-    return (
-      <div className="character-workstation about-console">
-        <motion.div className="speech-panel primary" animate={{ y: [0, -5, 0] }} transition={{ duration: 3.2, repeat: Infinity }}>
-          <strong>Hello.</strong>
-          <span>Full-stack developer briefing</span>
-        </motion.div>
-        <motion.div className="speech-panel secondary" animate={{ x: [0, 7, 0] }} transition={{ duration: 3.8, repeat: Infinity }}>
-          {focusLabel}
-        </motion.div>
-      </div>
-    );
-  }
-
-  if (variant === "education") {
-    return (
-      <div className="character-workstation study-console">
-        <div className="study-desk">
-          <div className="open-book">
-            <span />
-            <span />
-            <motion.i animate={{ rotateY: [0, -122, 0] }} transition={{ duration: 3.4, repeat: Infinity, ease: "easeInOut" }} />
-          </div>
-          <motion.div className="graduation-cap" animate={{ y: [0, -14, 0], rotate: [-5, 6, -5] }} transition={{ duration: 4, repeat: Infinity }} />
-          <motion.div className="pointing-beam" animate={{ scaleX: [0.55, 1, 0.55], opacity: [0.35, 0.85, 0.35] }} transition={{ duration: 2.1, repeat: Infinity }} />
-        </div>
-      </div>
-    );
-  }
-
-  if (variant === "skills") {
-    return (
-      <div className="character-workstation coding-console">
-        <div className="monitor-array">
-          {["api.ts", "ui.tsx", "db.js"].map((screen, index) => (
-            <div key={screen} className={`code-monitor monitor-${index + 1}`}>
-              <strong>{screen}</strong>
-              <span />
-              <span />
-              <span />
-            </div>
-          ))}
-        </div>
-        <div className="work-keyboard">
-          {Array.from({ length: 18 }).map((_, index) => (
-            <i key={index} style={{ "--key": index } as CSSProperties} />
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  if (variant === "projects") {
-    return (
-      <div className="character-workstation project-console">
-        {labels.map((label, index) => (
-          <motion.div
-            key={label}
-            className={`holo-project-card card-${index + 1}`}
-            animate={{ y: [0, index === 1 ? -12 : -7, 0], rotateY: [0, index % 2 ? -7 : 7, 0] }}
-            transition={{ delay: index * 0.2, duration: 3.8, repeat: Infinity, ease: "easeInOut" }}
-          >
-            <span>{label}</span>
-            <strong>{index + 1}</strong>
-          </motion.div>
-        ))}
-        <motion.div className="builder-pointer" animate={{ rotate: [-8, -24, -8] }} transition={{ duration: 2.2, repeat: Infinity }} />
-      </div>
-    );
-  }
-
-  if (variant === "experience") {
-    return (
-      <div className="character-workstation analytics-console">
-        <div className="analytics-screen">
-          <span className="chart-line" />
-          {[62, 82, 48, 74].map((height, index) => (
-            <motion.i
-              key={height}
-              animate={{ scaleY: [0.55, height / 100, 0.55] }}
-              style={{ "--bar": height } as CSSProperties}
-              transition={{ delay: index * 0.18, duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
-            />
-          ))}
-        </div>
-        <motion.div className="review-document" animate={{ x: [0, 10, 0], rotate: [0, 5, 0] }} transition={{ duration: 3, repeat: Infinity }} />
-      </div>
-    );
-  }
-
-  if (variant === "achievements") {
-    return (
-      <div className="character-workstation certificate-console">
-        {[0, 1, 2].map((index) => (
-          <motion.div
-            key={index}
-            className={`floating-certificate cert-${index + 1}`}
-            animate={{ y: [0, -8 - index * 2, 0], rotate: [0, index % 2 ? -5 : 5, 0] }}
-            transition={{ delay: index * 0.22, duration: 3.4, repeat: Infinity }}
-          >
-            <span />
-            <strong>{index === 0 ? "MT" : "OK"}</strong>
-          </motion.div>
-        ))}
-        <motion.div className="unlock-medal" animate={{ scale: [1, 1.12, 1], rotate: [-8, 8, -8] }} transition={{ duration: 2.6, repeat: Infinity }} />
-      </div>
-    );
-  }
-
+function Section3DScene({ accent, secondary }: { accent: string; secondary: string }) {
   return (
-    <div className="character-workstation contact-console">
-      <motion.div className="mail-terminal" animate={{ boxShadow: ["0 0 24px rgba(56,189,248,.18)", "0 0 42px rgba(52,211,153,.32)", "0 0 24px rgba(56,189,248,.18)"] }} transition={{ duration: 2.4, repeat: Infinity }}>
-        <FiMail />
-        <span>message.send()</span>
-      </motion.div>
-      <motion.div className="send-trail" animate={{ x: [0, 38, 0], opacity: [0.35, 1, 0.35] }} transition={{ duration: 2.1, repeat: Infinity }} />
-      <div className="social-nodes">
-        <i />
-        <i />
-        <i />
-      </div>
-    </div>
+    <>
+      <ambientLight intensity={1.2} />
+      <directionalLight color="#ffffff" intensity={3.5} position={[4, 5, 6]} />
+      <pointLight color={accent} intensity={30} position={[3, 3, 3]} />
+      <pointLight color={secondary} intensity={25} position={[-3, -2, 2]} />
+      <pointLight color="#ffffff" intensity={20} position={[0, 0, 5]} />
+      <Float speed={1.8} rotationIntensity={0.15} floatIntensity={0.25}>
+        <Stage3DHologram accent={accent} secondary={secondary} />
+      </Float>
+    </>
   );
 }
 
-export function SectionAvatar({ variant, focusLabel = "Idle", mood = "idle", className }: SectionAvatarProps) {
+export function SectionAvatar({ variant, focusLabel = "Active", mood = "idle", className }: SectionAvatarProps) {
   const config = avatarConfig[variant];
-  const parallax = useMouseParallax(0.8);
   const Icon = config.icon;
-  const style = {
-    "--character-accent": config.accent,
-    "--character-secondary": config.secondary,
-    "--eye-x": `${parallax.x * 0.16}rem`,
-    "--eye-y": `${parallax.y * 0.12}rem`,
-  } as CSSProperties;
 
   return (
-    <motion.aside
-      aria-label={`${config.role} animated character`}
-      className={clsx("character-scene", `character-scene-${variant}`, className)}
-      data-mood={mood}
-      data-parallax="28"
-      initial={{ opacity: 0, y: 28, scale: 0.96 }}
-      style={style}
-      viewport={{ once: true, margin: "-90px" }}
-      whileHover={{ y: -6, rotateX: 2, rotateY: -2 }}
+    <motion.div
+      aria-label={`${config.title} 3D Visual Stage`}
+      className={clsx(
+        "relative overflow-hidden rounded-3xl border border-white/15 bg-gradient-to-b from-[#070b18]/90 via-[#0a0f24]/85 to-[#050814]/90 p-6 sm:p-7 backdrop-blur-3xl shadow-[0_20px_50px_rgba(0,0,0,0.6)] select-none",
+        className
+      )}
+      initial={{ opacity: 0, y: 24, scale: 0.96 }}
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ duration: 0.65, ease: "easeOut" }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      whileHover={{ y: -4, borderColor: "rgba(56, 189, 248, 0.45)" }}
     >
-      <AvatarEnvironment accent={config.accent} secondary={config.secondary} />
-      <div className="character-volumetric-glow" />
-      <div className="character-depth-grid" />
-      <div className="character-particle-system" aria-hidden="true">
-        {Array.from({ length: 16 }).map((_, index) => (
-          <span key={index} style={{ "--dot": index } as CSSProperties} />
-        ))}
-      </div>
+      {/* Background Ambient Radial Glow */}
+      <div
+        className="pointer-events-none absolute -right-16 -top-16 size-64 rounded-full blur-3xl opacity-30"
+        style={{ backgroundColor: config.accent }}
+      />
+      <div
+        className="pointer-events-none absolute -left-16 -bottom-16 size-64 rounded-full blur-3xl opacity-25"
+        style={{ backgroundColor: config.secondary }}
+      />
 
-      <div className="character-orbit" aria-hidden="true">
-        {config.orbitIcons.map((OrbitIcon, index) => (
-          <motion.span
-            key={index}
-            animate={{ rotate: [0, 360], y: [0, index % 2 === 0 ? -8 : 8, 0] }}
-            style={{ "--orbit": index } as CSSProperties}
-            transition={{ delay: index * 0.28, duration: 8 + index * 1.4, ease: "linear", repeat: Infinity }}
+      {/* Top Telemetry Header */}
+      <div className="relative z-20 flex items-center justify-between gap-3 border-b border-white/10 pb-4">
+        <div className="flex items-center gap-2.5">
+          <div
+            className="flex size-9 items-center justify-center rounded-xl border text-base shadow-lg"
+            style={{
+              borderColor: `${config.accent}66`,
+              backgroundColor: `${config.accent}18`,
+              color: config.accent,
+            }}
           >
-            <OrbitIcon />
-          </motion.span>
-        ))}
-      </div>
-
-      <motion.div className={clsx("character-actor", `outfit-${config.outfit}`)} animate={{ y: [0, -5, 0] }} transition={{ duration: 4.2, repeat: Infinity, ease: "easeInOut" }}>
-        <CharacterHead focusLabel={focusLabel} variant={variant} />
-        <div className="character-neck" />
-        <div className="character-torso">
-          <motion.span
-            className="character-arm left"
-            animate={{ rotate: variant === "about" ? [-12, -38, -12] : variant === "education" ? [-4, -24, -4] : [-8, 5, -8] }}
-            transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-          />
-          <motion.span
-            className="character-arm right"
-            animate={{ rotate: variant === "projects" ? [12, -20, 12] : variant === "contact" ? [-16, -52, -16] : [8, -5, 8] }}
-            transition={{ duration: variant === "contact" ? 1.9 : 2.7, repeat: Infinity, ease: "easeInOut" }}
-          />
-          <span className="character-core-icon">
             <Icon />
-          </span>
+          </div>
+          <div>
+            <span className="text-[10px] font-black uppercase tracking-widest text-cyan-300">
+              {config.eyebrow}
+            </span>
+            <h4 className="text-sm sm:text-base font-black text-white leading-tight">
+              {config.title}
+            </h4>
+          </div>
         </div>
-      </motion.div>
 
-      <Workstation focusLabel={focusLabel} labels={config.consoleLabels} variant={variant} />
-
-      <div className="character-status-panel">
-        <span>{config.eyebrow}</span>
-        <strong>{focusLabel}</strong>
-        <small>{config.title}</small>
+        {/* Live Status Pill */}
+        <div className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] font-bold text-slate-300 backdrop-blur-md">
+          <span className="size-2 rounded-full bg-emerald-400 animate-ping" />
+          <span>{mood === "success" ? "TRANSMITTED" : mood === "sending" ? "SYNCING..." : "LIVE 3D"}</span>
+        </div>
       </div>
-    </motion.aside>
+
+      {/* 3D Holographic Canvas Stage with Centered 3D MT Logo */}
+      <div className="relative my-4 h-60 sm:h-68 w-full overflow-hidden rounded-2xl border border-white/10 bg-[#040714]/80">
+        <Canvas
+          camera={{ fov: 40, position: [0, 0, 6.2] }}
+          dpr={[1, 1.5]}
+          gl={{ alpha: true, antialias: true, powerPreference: "high-performance" }}
+        >
+          <Suspense fallback={null}>
+            <Section3DScene accent={config.accent} secondary={config.secondary} />
+          </Suspense>
+        </Canvas>
+      </div>
+
+      {/* Bottom Telemetry Chips & Focus Label */}
+      <div className="relative z-20 mt-3 flex flex-wrap items-center justify-between gap-2">
+        <div className="flex flex-wrap gap-1.5">
+          {config.chips.map((chip) => (
+            <span
+              key={chip}
+              className="inline-flex items-center gap-1 rounded-lg border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] sm:text-[11px] font-semibold text-slate-300 backdrop-blur-md"
+            >
+              <FiCheckCircle className="text-cyan-400 text-[10px]" />
+              {chip}
+            </span>
+          ))}
+        </div>
+
+        {/* Selected Topic Pill */}
+        <div className="w-full mt-2 pt-2.5 border-t border-white/10 flex items-center justify-between text-xs">
+          <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Current Focus:</span>
+          <span className="font-extrabold text-cyan-300 truncate max-w-[200px]">{focusLabel}</span>
+        </div>
+      </div>
+    </motion.div>
   );
 }
