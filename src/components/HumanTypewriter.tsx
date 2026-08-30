@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 
 interface HumanTypewriterProps {
   phrases?: string[];
@@ -30,7 +29,7 @@ export function HumanTypewriter({
 
   useEffect(() => {
     const targetPhrase = phrases[phraseIndex % phrases.length];
-    let timer: NodeJS.Timeout;
+    let timer: ReturnType<typeof setTimeout>;
 
     if (!isDeleting && currentText === targetPhrase) {
       // Pause at the end of typing

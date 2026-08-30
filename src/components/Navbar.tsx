@@ -38,7 +38,7 @@ const navConfig: NavItemConfig[] = [
   { id: "contact", label: "Contact", href: "#contact", Icon: Contact3DIcon },
 ];
 
-export function Navbar({ theme, onThemeToggle }: NavbarProps) {
+export function Navbar(_props: NavbarProps) {
   const [activeSection, setActiveSection] = useState<string>("home");
   const [isScrolled, setIsScrolled] = useState<boolean>(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
@@ -80,7 +80,7 @@ export function Navbar({ theme, onThemeToggle }: NavbarProps) {
     };
   }, []);
 
-  const handleNavClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, href: string, id: string) => {
+  const handleNavClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
     e.preventDefault();
     const targetElement = document.getElementById(id);
     if (targetElement) {
@@ -107,7 +107,7 @@ export function Navbar({ theme, onThemeToggle }: NavbarProps) {
         {/* Left Profile Pill Card with Official MT Monogram Logo */}
         <a
           href="#home"
-          onClick={(e) => handleNavClick(e, "#home", "home")}
+          onClick={(e) => handleNavClick(e, "home")}
           className="group flex shrink-0 items-center gap-2.5 sm:gap-3 rounded-full border border-white/10 bg-white/[0.04] py-1 sm:py-1.5 pl-1 sm:pl-1.5 pr-3 sm:pr-4 transition-all duration-300 hover:border-cyan-400/40 hover:bg-white/[0.07] hover:shadow-[0_0_20px_rgba(34,211,238,0.25)]"
           aria-label="Mithun Talukdar Home"
         >
@@ -143,7 +143,7 @@ export function Navbar({ theme, onThemeToggle }: NavbarProps) {
               <a
                 key={item.id}
                 href={item.href}
-                onClick={(e) => handleNavClick(e, item.href, item.id)}
+                onClick={(e) => handleNavClick(e, item.id)}
                 className={`relative flex flex-col items-center justify-center min-w-[4.1rem] h-[4.4rem] px-2 rounded-2xl transition-all duration-200 select-none group ${
                   isActive
                     ? "nav-item-active"
@@ -223,7 +223,7 @@ export function Navbar({ theme, onThemeToggle }: NavbarProps) {
                   <a
                     key={item.id}
                     href={item.href}
-                    onClick={(e) => handleNavClick(e, item.href, item.id)}
+                    onClick={(e) => handleNavClick(e, item.id)}
                     className={`flex flex-col items-center justify-center p-3 rounded-2xl border transition-all duration-200 ${
                       isActive
                         ? "border-cyan-400 bg-gradient-to-b from-cyan-500/25 to-blue-600/15 shadow-[0_0_20px_rgba(34,211,238,0.3)] text-white font-bold"

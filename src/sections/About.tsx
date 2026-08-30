@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { FiCode, FiCpu, FiLayers, FiZap, FiCheckCircle, FiAward, FiFolder, FiGitBranch, FiClock } from "react-icons/fi";
+import { FiCode, FiCpu, FiLayers, FiZap, FiCheckCircle, FiFolder, FiGitBranch, FiClock } from "react-icons/fi";
 import { SectionHeader } from "../components/SectionHeader";
 import { SectionAvatar } from "../components/SectionAvatar";
 import { achievements } from "../constants/portfolio";

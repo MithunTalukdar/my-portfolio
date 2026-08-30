@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { FiArrowUpRight, FiCheckCircle, FiCode, FiCpu, FiDatabase, FiGlobe, FiLayers, FiServer, FiShield, FiZap } from "react-icons/fi";
+import { FiArrowUpRight, FiCheckCircle } from "react-icons/fi";
 import { SectionHeader } from "../components/SectionHeader";
 import { TiltCard } from "../components/TiltCard";
 import { services } from "../constants/portfolio";

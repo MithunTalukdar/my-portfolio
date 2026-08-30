@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { FiArrowUpRight, FiBriefcase, FiCheckCircle, FiCode, FiDatabase, FiLayers, FiServer, FiShield } from "react-icons/fi";
+import { FiCheckCircle, FiCode, FiDatabase, FiLayers, FiServer, FiShield } from "react-icons/fi";
 import { SectionHeader } from "../components/SectionHeader";
 import { SectionAvatar } from "../components/SectionAvatar";
 import { experience } from "../constants/portfolio";

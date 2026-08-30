@@ -5,7 +5,7 @@ export function SEO() {
     "@context": "https://schema.org",
     "@type": "Person",
     name: profile.name,
-    jobTitle: profile.title,
+    jobTitle: profile.role,
     url: "https://mithun-talukdar.dev",
     sameAs: [profile.github, profile.linkedin],
     email: profile.email,

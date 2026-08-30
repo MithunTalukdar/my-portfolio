@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { FiArrowDown, FiArrowUpRight, FiCpu, FiDownload, FiLayers, FiSend, FiZap } from "react-icons/fi";
+import { FiArrowDown, FiCpu, FiDownload, FiLayers, FiSend, FiZap } from "react-icons/fi";
 import { HiSparkles } from "react-icons/hi2";
-import { FaGithub, FaLinkedin, FaNodeJs, FaReact } from "react-icons/fa";
-import { SiMongodb, SiNextdotjs, SiTailwindcss, SiTypescript } from "react-icons/si";
+import { FaNodeJs, FaReact } from "react-icons/fa";
+import { SiMongodb, SiNextdotjs, SiTypescript } from "react-icons/si";
 import { profile, socialLinks } from "../constants/portfolio";
 import { MagneticButton } from "../components/MagneticButton";
-import { BrandLogo } from "../components/BrandLogo";
 import { ProfileImageShowcase } from "../components/ProfileImageShowcase";
 
 const roles = [

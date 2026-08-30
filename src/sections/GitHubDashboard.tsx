@@ -1,8 +1,8 @@
 import { Suspense, useMemo, useRef, useState } from "react";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Float, Sparkles, OrbitControls, Text, Html } from "@react-three/drei";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { Sparkles, OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   FiActivity,
   FiCode,
@@ -12,9 +12,7 @@ import {
   FiGithub,
   FiLayers,
   FiStar,
-  FiTerminal,
   FiUsers,
-  FiZap,
 } from "react-icons/fi";
 import type { IconType } from "react-icons";
 import { MagneticButton } from "../components/MagneticButton";

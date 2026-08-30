@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import type { CSSProperties } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { FiX, FiCheckCircle, FiInfo, FiZap } from "react-icons/fi";
+import { FiX } from "react-icons/fi";
 import { skillOrbits } from "../constants/portfolio";
 import { AtomicNucleus } from "./AtomicNucleus";
 

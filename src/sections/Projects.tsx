@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { FiArrowUpRight, FiExternalLink, FiGithub, FiLayers, FiMaximize2, FiZap } from "react-icons/fi";
+import { FiExternalLink, FiGithub, FiMaximize2, FiZap } from "react-icons/fi";
 import { MagneticButton } from "../components/MagneticButton";
 import { ProjectModal } from "../components/ProjectModal";
 import { SectionHeader } from "../components/SectionHeader";

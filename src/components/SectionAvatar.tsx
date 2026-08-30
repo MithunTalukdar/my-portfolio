@@ -1,5 +1,4 @@
 import { useRef, useMemo, Suspense } from "react";
-import type { CSSProperties } from "react";
 import { Canvas, useFrame, useLoader } from "@react-three/fiber";
 import { Float, Sparkles } from "@react-three/drei";
 import * as THREE from "three";
@@ -8,23 +7,14 @@ import { motion } from "framer-motion";
 import type { IconType } from "react-icons";
 import clsx from "clsx";
 import {
-  FiAward,
-  FiBookOpen,
   FiBriefcase,
   FiCheckCircle,
-  FiCode,
   FiCpu,
-  FiFileText,
   FiLayers,
   FiMail,
-  FiMonitor,
-  FiSend,
-  FiServer,
   FiUser,
-  FiZap,
 } from "react-icons/fi";
-import { FaGraduationCap, FaMedal, FaNodeJs, FaReact } from "react-icons/fa";
-import { SiMongodb, SiTypescript, SiVercel, SiNextdotjs } from "react-icons/si";
+import { FaGraduationCap, FaMedal } from "react-icons/fa";
 import mtMonogramUrl from "../assets/mt-monogram.svg";
 
 export type SectionAvatarVariant =

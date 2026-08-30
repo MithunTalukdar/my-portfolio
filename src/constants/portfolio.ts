@@ -1,10 +1,7 @@
 import {
-  FaGraduationCap,
   FaEnvelope,
   FaGithub,
   FaLinkedin,
-  FaPhone,
-  FaMapMarkerAlt,
   FaReact,
   FaJs,
   FaHtml5,
@@ -15,7 +12,6 @@ import {
 } from "react-icons/fa";
 import { SiExpress, SiMongodb, SiPostman, SiRedux, SiRender, SiTailwindcss, SiVercel } from "react-icons/si";
 import { VscCode } from "react-icons/vsc";
-import { HiOutlineDevicePhoneMobile } from "react-icons/hi2";
 import { MdOutlineCloudDone, MdOutlineDesignServices } from "react-icons/md";
 import type { Project, Service, Skill } from "../types/portfolio";
 

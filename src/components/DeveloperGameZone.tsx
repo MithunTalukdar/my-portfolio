@@ -1,22 +1,16 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
-  FiActivity,
   FiAward,
   FiClock,
-  FiCpu,
   FiPlay,
   FiRefreshCw,
   FiTarget,
   FiVolume2,
   FiVolumeX,
   FiZap,
-  FiCheckCircle,
-  FiShield,
-  FiHeart,
 } from "react-icons/fi";
-import { FaReact, FaNodeJs, FaBug, FaJs } from "react-icons/fa";
-import { SiMongodb, SiTypescript, SiNextdotjs, SiTailwindcss } from "react-icons/si";
+import { FaBug, FaReact } from "react-icons/fa";
 import { SectionHeader } from "./SectionHeader";
 
 type AudioWindow = Window & typeof globalThis & { webkitAudioContext?: typeof AudioContext };

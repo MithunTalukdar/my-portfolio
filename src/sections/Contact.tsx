@@ -10,13 +10,10 @@ import {
   FiLoader,
   FiMail,
   FiMapPin,
-  FiMessageCircle,
   FiPhone,
   FiSend,
-  FiUser,
 } from "react-icons/fi";
 import { HiSparkles } from "react-icons/hi2";
-import { MagneticButton } from "../components/MagneticButton";
 import { SectionHeader } from "../components/SectionHeader";
 import { SectionAvatar } from "../components/SectionAvatar";
 import { profile } from "../constants/portfolio";

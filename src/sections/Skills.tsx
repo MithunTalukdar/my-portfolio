@@ -1,23 +1,19 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  FiCpu,
+  FiCode,
   FiDatabase,
-  FiGlobe,
   FiLayers,
   FiServer,
   FiTool,
   FiZap,
-  FiCheckCircle,
 } from "react-icons/fi";
 import { FaCode, FaCss3Alt, FaDatabase, FaGitAlt, FaGithub, FaHtml5, FaJs, FaNodeJs, FaReact, FaServer } from "react-icons/fa";
 import { SiExpress, SiMongodb, SiPostman, SiRedux, SiRender, SiTailwindcss, SiVercel } from "react-icons/si";
 import { VscCode } from "react-icons/vsc";
 import { AtomicSkills } from "../components/AtomicSkills";
 import { SectionHeader } from "../components/SectionHeader";
-import { SectionAvatar } from "../components/SectionAvatar";
 import { skills } from "../constants/portfolio";
-import type { Skill } from "../types/portfolio";
 
 const skillCategories = [
   { id: "All", label: "All Skills", icon: FiZap },
