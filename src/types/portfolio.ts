@@ -7,6 +7,14 @@ export interface Skill {
   name: string;
   level: number;
   category: SkillCategory;
+  levelTier?: "Master" | "Advanced" | "Proficient" | "Specialist";
+  brandColor?: string;
+  glowColor?: string;
+  accentGradient?: string;
+  tagline?: string;
+  keyConcepts?: string[];
+  projectsUsed?: string[];
+  synergyWith?: string[];
 }
 
 export interface Project {
