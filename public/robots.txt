@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
 
-Sitemap: /sitemap.xml
+Sitemap: https://mithun-talukdar.dev/sitemap.xml
+Host: https://mithun-talukdar.dev

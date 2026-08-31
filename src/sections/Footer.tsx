@@ -73,7 +73,7 @@ export function Footer() {
               <FiArrowUp className="text-cyan-400" />
             </motion.a>
             <p className="text-[11px] font-medium text-slate-400">
-              © {new Date().getFullYear()} Mithun Talukdar. All Rights Reserved.
+              © {new Date().getFullYear()} Mithun Talukdar — Full Stack Developer. All Rights Reserved.
             </p>
           </div>
         </div>

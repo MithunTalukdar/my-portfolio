@@ -245,9 +245,11 @@ export function ProfileImageShowcase() {
           <div className="profile-frame">
             <img
               src={profileImage}
-              alt="Mithun Talukdar, full stack web developer"
+              alt="Mithun Talukdar - Full Stack Developer & AI Developer"
               loading="lazy"
               decoding="async"
+              width={480}
+              height={480}
               className="profile-avatar-img"
             />
             {/* Dynamic Glass Glare Overlay */}

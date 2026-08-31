@@ -17,17 +17,19 @@ export function Home() {
 
   return (
     <>
-      <Hero />
-      <About />
-      <Education />
-      <Skills />
-      <Projects />
-      <Experience />
-      <Services />
-      <Achievements />
-      <GitHubDashboard />
-      <Contact />
-      <DeveloperGameZone />
+      <main id="main-content" tabIndex={-1}>
+        <Hero />
+        <About />
+        <Education />
+        <Skills />
+        <Projects />
+        <Experience />
+        <Services />
+        <Achievements />
+        <GitHubDashboard />
+        <Contact />
+        <DeveloperGameZone />
+      </main>
       <Footer />
     </>
   );
