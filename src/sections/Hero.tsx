@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { FiArrowDown, FiCpu, FiDownload, FiLayers, FiSend, FiZap } from "react-icons/fi";
 import { HiSparkles } from "react-icons/hi2";
 import { FaNodeJs, FaReact } from "react-icons/fa";
@@ -17,6 +17,7 @@ const roles = [
 
 export function Hero() {
   const [roleIndex, setRoleIndex] = useState(0);
+  const shouldReduceMotion = useReducedMotion();
 
   // Smooth dynamic pop-up role cycling
   useEffect(() => {
@@ -95,14 +96,84 @@ export function Hero() {
           </div>
 
           {/* Greeting */}
-          <p className="text-base sm:text-lg font-bold tracking-wide text-cyan-300">
+          <motion.p
+            initial={shouldReduceMotion ? { opacity: 0 } : { opacity: 0, y: 12, filter: "blur(6px)", letterSpacing: "0.02em" }}
+            animate={shouldReduceMotion ? { opacity: 1 } : { opacity: 1, y: 0, filter: "blur(0px)", letterSpacing: "0.05em" }}
+            transition={{ duration: 0.6, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+            className="text-base sm:text-lg font-bold tracking-wide text-cyan-300 drop-shadow-[0_0_12px_rgba(34,211,238,0.3)]"
+          >
             Hi, I'm
-          </p>
+          </motion.p>
 
-          {/* Main Name Heading */}
-          <h1 className="mt-1 text-[clamp(2.75rem,8vw,4.6rem)] font-black leading-[1.08] tracking-tight text-white">
-            Mithun <span className="gradient-text drop-shadow-[0_0_35px_rgba(103,232,249,0.35)]">Talukdar</span>
-          </h1>
+          {/* Main Name Heading with Cinematic Reveal & Light Sweep */}
+          <div className="relative mt-1 inline-block">
+            {!shouldReduceMotion && (
+              <motion.div
+                initial={{ x: "-120%", opacity: 0 }}
+                animate={{
+                  x: "220%",
+                  opacity: [0, 0.85, 0],
+                }}
+                transition={{
+                  duration: 1.2,
+                  delay: 0.45,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+                className="pointer-events-none absolute inset-y-0 w-1/2 -skew-x-12 bg-gradient-to-r from-transparent via-cyan-300/40 via-white/60 to-transparent blur-md mix-blend-screen z-10"
+                aria-hidden="true"
+              />
+            )}
+
+            <h1 className="text-[clamp(2.75rem,8vw,4.6rem)] font-black leading-[1.08] tracking-tight text-white">
+              <motion.span
+                initial={
+                  shouldReduceMotion
+                    ? { opacity: 0 }
+                    : { opacity: 0, y: 24, scale: 0.94, filter: "blur(10px)", textShadow: "0 0 0px rgba(34,211,238,0)" }
+                }
+                animate={
+                  shouldReduceMotion
+                    ? { opacity: 1 }
+                    : {
+                        opacity: 1,
+                        y: 0,
+                        scale: 1,
+                        filter: "blur(0px)",
+                        textShadow: [
+                          "0 0 0px rgba(34,211,238,0)",
+                          "0 0 28px rgba(34,211,238,0.6), 0 0 50px rgba(168,85,247,0.35)",
+                          "0 0 0px rgba(34,211,238,0)",
+                        ],
+                      }
+                }
+                transition={{ duration: 0.75, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                className="inline-block mr-3"
+              >
+                Mithun
+              </motion.span>
+              <motion.span
+                initial={
+                  shouldReduceMotion
+                    ? { opacity: 0 }
+                    : { opacity: 0, y: 24, scale: 0.94, filter: "blur(10px)" }
+                }
+                animate={
+                  shouldReduceMotion
+                    ? { opacity: 1 }
+                    : {
+                        opacity: 1,
+                        y: 0,
+                        scale: 1,
+                        filter: "blur(0px)",
+                      }
+                }
+                transition={{ duration: 0.75, delay: 0.38, ease: [0.16, 1, 0.3, 1] }}
+                className="gradient-text inline-block drop-shadow-[0_0_35px_rgba(103,232,249,0.35)]"
+              >
+                Talukdar
+              </motion.span>
+            </h1>
+          </div>
 
           {/* Dynamic Animated Pop-up Role Subtitle */}
           <div className="mt-4 flex items-center gap-3 text-[clamp(1.2rem,3.5vw,1.95rem)] font-extrabold text-slate-100 min-h-[2.5rem]">
