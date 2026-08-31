@@ -3,15 +3,16 @@
         xmlns:xhtml="http://www.w3.org/1999/xhtml"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
-    <loc>https://mithun-talukdar.dev/</loc>
+    <loc>https://mithuntalukdar.vercel.app/</loc>
     <lastmod>2026-08-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <image:image>
-      <image:loc>https://mithun-talukdar.dev/assets/profile-image.jpg</image:loc>
+      <image:loc>https://mithuntalukdar.vercel.app/assets/profile-image.jpg</image:loc>
       <image:title>Mithun Talukdar - Full Stack Developer</image:title>
       <image:caption>Official portrait of Mithun Talukdar, Full Stack &amp; AI Web Developer</image:caption>
     </image:image>
   </url>
 </urlset>
+
 

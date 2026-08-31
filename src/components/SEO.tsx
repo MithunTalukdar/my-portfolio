@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { profile } from "../constants/portfolio";
 
 export function SEO() {
-  const canonicalUrl = "https://mithun-talukdar.dev/";
+  const canonicalUrl = "https://mithuntalukdar.vercel.app/";
 
   // Update dynamic document title and meta for SPA router consistency
   useEffect(() => {
@@ -14,12 +14,12 @@ export function SEO() {
     "@graph": [
       {
         "@type": "Person",
-        "@id": "https://mithun-talukdar.dev/#person",
+        "@id": "https://mithuntalukdar.vercel.app/#person",
         "name": "Mithun Talukdar",
         "givenName": "Mithun",
         "familyName": "Talukdar",
         "url": canonicalUrl,
-        "image": "https://mithun-talukdar.dev/assets/profile-image.jpg",
+        "image": "https://mithuntalukdar.vercel.app/assets/profile-image.jpg",
         "jobTitle": "Full Stack Developer",
         "description":
           "Mithun Talukdar is an AI-Powered Full Stack Developer specializing in MERN Stack (React, Node.js, Express, MongoDB), Next.js, TypeScript, REST APIs, and scalable web architectures.",
@@ -57,7 +57,7 @@ export function SEO() {
       },
       {
         "@type": "WebSite",
-        "@id": "https://mithun-talukdar.dev/#website",
+        "@id": "https://mithuntalukdar.vercel.app/#website",
         "url": canonicalUrl,
         "name": "Mithun Talukdar",
         "alternateName": "Mithun Talukdar Portfolio",
@@ -65,25 +65,25 @@ export function SEO() {
           "Official personal portfolio website of Mithun Talukdar, Full Stack Developer.",
         "inLanguage": "en-US",
         "publisher": {
-          "@id": "https://mithun-talukdar.dev/#person"
+          "@id": "https://mithuntalukdar.vercel.app/#person"
         },
         "author": {
-          "@id": "https://mithun-talukdar.dev/#person"
+          "@id": "https://mithuntalukdar.vercel.app/#person"
         }
       },
       {
         "@type": "ProfilePage",
-        "@id": "https://mithun-talukdar.dev/#webpage",
+        "@id": "https://mithuntalukdar.vercel.app/#webpage",
         "url": canonicalUrl,
         "name": "Mithun Talukdar | Full Stack Developer & AI Developer",
         "isPartOf": {
-          "@id": "https://mithun-talukdar.dev/#website"
+          "@id": "https://mithuntalukdar.vercel.app/#website"
         },
         "about": {
-          "@id": "https://mithun-talukdar.dev/#person"
+          "@id": "https://mithuntalukdar.vercel.app/#person"
         },
         "mainEntity": {
-          "@id": "https://mithun-talukdar.dev/#person"
+          "@id": "https://mithuntalukdar.vercel.app/#person"
         },
         "description":
           "Official portfolio website of Mithun Talukdar showcasing full-stack MERN projects, REST API services, modern interactive UI/UX, and technical expertise.",
@@ -91,7 +91,7 @@ export function SEO() {
       },
       {
         "@type": "ItemList",
-        "@id": "https://mithun-talukdar.dev/#projects",
+        "@id": "https://mithuntalukdar.vercel.app/#projects",
         "name": "Featured Software Engineering Projects by Mithun Talukdar",
         "itemListElement": [
           {
@@ -101,7 +101,7 @@ export function SEO() {
             "description": "Full-stack Learning Management System with role-based dashboard, course progress, and secure auth.",
             "codeRepository": "https://github.com/MithunTalukdar/LMS",
             "programmingLanguage": "JavaScript, React, Node.js, Express, MongoDB",
-            "author": { "@id": "https://mithun-talukdar.dev/#person" }
+            "author": { "@id": "https://mithuntalukdar.vercel.app/#person" }
           },
           {
             "@type": "SoftwareSourceCode",
@@ -110,7 +110,7 @@ export function SEO() {
             "description": "High-performance full-stack e-commerce web platform with product filters, cart management, and checkout.",
             "codeRepository": "https://github.com/MithunTalukdar/lumina-shoping",
             "programmingLanguage": "React, Tailwind CSS, Node.js, MongoDB",
-            "author": { "@id": "https://mithun-talukdar.dev/#person" }
+            "author": { "@id": "https://mithuntalukdar.vercel.app/#person" }
           },
           {
             "@type": "SoftwareSourceCode",
@@ -119,7 +119,7 @@ export function SEO() {
             "description": "Modern business web application with interactive product catalogs, responsive layout, and lead forms.",
             "codeRepository": "https://github.com/MithunTalukdar/Swastik-International",
             "programmingLanguage": "React, Tailwind CSS, JavaScript",
-            "author": { "@id": "https://mithun-talukdar.dev/#person" }
+            "author": { "@id": "https://mithuntalukdar.vercel.app/#person" }
           }
         ]
       }

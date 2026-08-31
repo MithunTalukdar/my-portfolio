@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://mithun-talukdar.dev/sitemap.xml
-Host: https://mithun-talukdar.dev
+Sitemap: https://mithuntalukdar.vercel.app/sitemap.xml
+Host: https://mithuntalukdar.vercel.app
+
