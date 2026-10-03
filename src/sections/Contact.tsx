@@ -3,14 +3,17 @@ import type { ChangeEvent, FormEvent } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   FiAlertCircle,
+  FiBriefcase,
   FiCheckCircle,
   FiGithub,
   FiLinkedin,
   FiLoader,
   FiMail,
   FiMapPin,
+  FiMessageSquare,
   FiPhone,
   FiSend,
+  FiUser,
 } from "react-icons/fi";
 import { FaWhatsapp } from "react-icons/fa";
 import { HiSparkles } from "react-icons/hi2";
@@ -231,78 +234,133 @@ export function Contact() {
             </div>
           </div>
 
-          {/* Right Column: Direct Seamless Contact Form */}
+          {/* Right Column: Direct Seamless Contact Form with Clear Input Boxes */}
           <form
             onSubmit={handleSubmit}
             className="relative overflow-hidden rounded-3xl border border-white/15 bg-gradient-to-br from-slate-900/95 via-slate-950/90 to-slate-900/95 p-7 sm:p-9 backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
           >
-            <div className="mb-6">
-              <span className="text-xs font-bold uppercase tracking-widest text-cyan-300">Message Channel</span>
-              <h3 className="mt-1 text-2xl font-black text-white">Send Direct Inquiry</h3>
+            <div className="mb-6 flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <span className="text-xs font-bold uppercase tracking-widest text-cyan-300">Message Channel</span>
+                <h3 className="mt-1 text-2xl font-black text-white">Send Direct Inquiry</h3>
+              </div>
+              <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-[11px] font-semibold text-emerald-300 flex items-center gap-1.5">
+                <FaWhatsapp className="text-emerald-400" /> WhatsApp & Email Sync
+              </span>
             </div>
 
+            {/* Row 1: Name & Email Boxes */}
             <div className="grid gap-5 sm:grid-cols-2">
-              <label className="floating-field">
+              {/* Name Box */}
+              <div>
+                <label
+                  htmlFor="client-name"
+                  className="mb-2 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-300"
+                >
+                  <FiUser className="text-cyan-400 text-sm" /> Your Name <span className="text-cyan-400">*</span>
+                </label>
                 <input
+                  id="client-name"
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
                   required
                   minLength={2}
-                  placeholder=" "
+                  placeholder="e.g. Rahul Sharma"
+                  className="w-full rounded-xl border border-white/15 bg-slate-950/70 px-4 py-3.5 text-sm font-medium text-white placeholder-slate-500 shadow-inner transition-all duration-200 outline-none focus:border-cyan-400 focus:bg-slate-900/90 focus:ring-2 focus:ring-cyan-400/20"
                 />
-                <span>Your Name</span>
-              </label>
-              <label className="floating-field">
+              </div>
+
+              {/* Email Box */}
+              <div>
+                <label
+                  htmlFor="client-email"
+                  className="mb-2 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-300"
+                >
+                  <FiMail className="text-cyan-400 text-sm" /> Email Address <span className="text-cyan-400">*</span>
+                </label>
                 <input
+                  id="client-email"
                   type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  placeholder=" "
+                  placeholder="e.g. rahul@example.com"
+                  className="w-full rounded-xl border border-white/15 bg-slate-950/70 px-4 py-3.5 text-sm font-medium text-white placeholder-slate-500 shadow-inner transition-all duration-200 outline-none focus:border-cyan-400 focus:bg-slate-900/90 focus:ring-2 focus:ring-cyan-400/20"
                 />
-                <span>Your Email Address</span>
-              </label>
+              </div>
             </div>
 
+            {/* Row 2: Phone Number & Project/Subject Boxes */}
             <div className="mt-5 grid gap-5 sm:grid-cols-2">
-              <label className="floating-field">
+              {/* Phone Number Box (Dedicated Box requested by Mithun) */}
+              <div>
+                <label
+                  htmlFor="client-phone"
+                  className="mb-2 flex items-center justify-between text-xs font-bold uppercase tracking-wider text-slate-300"
+                >
+                  <span className="flex items-center gap-1.5">
+                    <FiPhone className="text-emerald-400 text-sm" /> Phone Number
+                  </span>
+                  <span className="text-[10px] font-semibold text-emerald-400/90 normal-case bg-emerald-500/15 px-2 py-0.5 rounded-full border border-emerald-500/30">
+                    WhatsApp / Call
+                  </span>
+                </label>
                 <input
+                  id="client-phone"
                   type="tel"
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  placeholder=" "
+                  placeholder="e.g. +91 87776 73839"
+                  className="w-full rounded-xl border border-emerald-500/30 bg-slate-950/70 px-4 py-3.5 text-sm font-medium text-white placeholder-slate-500 shadow-inner transition-all duration-200 outline-none focus:border-emerald-400 focus:bg-slate-900/90 focus:ring-2 focus:ring-emerald-400/20"
                 />
-                <span>Your Phone Number</span>
-              </label>
-              <label className="floating-field">
+              </div>
+
+              {/* Project / Subject Box */}
+              <div>
+                <label
+                  htmlFor="client-subject"
+                  className="mb-2 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-300"
+                >
+                  <FiBriefcase className="text-purple-400 text-sm" /> Project / Subject <span className="text-purple-400">*</span>
+                </label>
                 <input
+                  id="client-subject"
                   name="subject"
                   value={formData.subject}
                   onChange={handleChange}
                   required
                   minLength={3}
-                  placeholder=" "
+                  placeholder="e.g. Full-Stack Web Development"
+                  className="w-full rounded-xl border border-white/15 bg-slate-950/70 px-4 py-3.5 text-sm font-medium text-white placeholder-slate-500 shadow-inner transition-all duration-200 outline-none focus:border-cyan-400 focus:bg-slate-900/90 focus:ring-2 focus:ring-cyan-400/20"
                 />
-                <span>Project Subject</span>
-              </label>
+              </div>
             </div>
 
-            <label className="floating-field mt-5 block">
+            {/* Row 3: Message / Requirements Box */}
+            <div className="mt-5">
+              <label
+                htmlFor="client-message"
+                className="mb-2 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-300"
+              >
+                <FiMessageSquare className="text-amber-400 text-sm" /> Project Details & Requirements <span className="text-amber-400">*</span>
+              </label>
               <textarea
+                id="client-message"
                 name="message"
                 value={formData.message}
                 onChange={handleChange}
                 required
                 minLength={10}
-                placeholder=" "
+                placeholder="Tell me about your project, timeline, features, or requirements..."
                 rows={5}
+                className="w-full rounded-xl border border-white/15 bg-slate-950/70 p-4 text-sm font-medium text-white placeholder-slate-500 shadow-inner transition-all duration-200 outline-none focus:border-cyan-400 focus:bg-slate-900/90 focus:ring-2 focus:ring-cyan-400/20 resize-y min-h-[120px]"
               />
-              <span>Tell me about your project, timeline, or requirements...</span>
-            </label>
+            </div>
 
+            {/* Submit Button */}
             <motion.button
               className="primary-button mt-7 w-full justify-center py-3.5 text-base shadow-[0_12px_30px_rgba(34,211,238,0.3)] hover:shadow-[0_16px_40px_rgba(34,211,238,0.45)]"
               disabled={status === "sending"}
