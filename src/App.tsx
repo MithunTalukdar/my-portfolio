@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { CustomCursor } from "./components/CustomCursor";
+import { FloatingWhatsApp } from "./components/FloatingWhatsApp";
 import { LoadingScreen } from "./components/LoadingScreen";
 import { Navbar } from "./components/Navbar";
 import { ParticleField } from "./components/ParticleField";
@@ -30,6 +31,7 @@ export default function App() {
       </Suspense>
       <ParticleField />
       <CustomCursor />
+      <FloatingWhatsApp />
       <div className="relative z-10 min-h-screen">
         <Navbar theme={theme} onThemeToggle={toggleTheme} />
         <Routes>

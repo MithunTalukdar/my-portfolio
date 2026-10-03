@@ -2,6 +2,7 @@ import {
   FaEnvelope,
   FaGithub,
   FaLinkedin,
+  FaWhatsapp,
   FaReact,
   FaJs,
   FaHtml5,
@@ -22,6 +23,9 @@ export const profile = {
   location: "Kolkata, West Bengal, India",
   email: "mithuntalukdar2003@gmail.com",
   phone: "+91 87776 73839",
+  whatsappNumber: "918777673839",
+  whatsappFormatted: "+91 87776 73839",
+  whatsapp: "https://wa.me/918777673839",
   github: "https://github.com/MithunTalukdar",
   linkedin: "https://linkedin.com/in/mithun-talukdar",
   bio: "Specializing in building modern, scalable web applications with MERN Stack, Next.js, and AI Integration. Crafting robust REST APIs and high-performance, user-centric interfaces.",
@@ -41,6 +45,7 @@ export const navItems = [
 ];
 
 export const socialLinks = [
+  { label: "WhatsApp", href: `https://wa.me/918777673839?text=${encodeURIComponent("Hi Mithun, I saw your portfolio and would like to connect!")}`, icon: FaWhatsapp },
   { label: "GitHub", href: profile.github, icon: FaGithub },
   { label: "LinkedIn", href: profile.linkedin, icon: FaLinkedin },
   { label: "Email", href: `mailto:${profile.email}`, icon: FaEnvelope },
