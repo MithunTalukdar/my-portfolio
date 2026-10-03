@@ -3,6 +3,7 @@ import emailjs from "@emailjs/browser";
 export interface ContactFormData {
   name: string;
   email: string;
+  phone?: string;
   subject: string;
   message: string;
 }
@@ -29,7 +30,7 @@ export const isEmailConfigured = Boolean(
 );
 
 /**
- * Generates direct WhatsApp URL with pre-filled structured message.
+ * Generates direct WhatsApp URL with pre-filled structured message including client's phone number.
  */
 export function createWhatsAppUrl(data: Partial<ContactFormData>): string {
   const lines: string[] = [
@@ -37,6 +38,7 @@ export function createWhatsAppUrl(data: Partial<ContactFormData>): string {
     "",
     `👤 *Name:* ${data.name?.trim() || "Visitor"}`,
     `📧 *Email:* ${data.email?.trim() || "Not provided"}`,
+    `📞 *Client Phone:* ${data.phone?.trim() || "Not provided"}`,
     `📌 *Subject:* ${data.subject?.trim() || "Project Discussion"}`,
     "",
     "💬 *Message:*",
@@ -48,11 +50,11 @@ export function createWhatsAppUrl(data: Partial<ContactFormData>): string {
 }
 
 /**
- * Generates direct mailto link with pre-filled subject and body.
+ * Generates direct mailto link with pre-filled subject and body including client's phone number.
  */
 export function createMailtoUrl(data: Partial<ContactFormData>): string {
   const subject = `[Portfolio Inquiry] ${data.subject?.trim() || "Project Discussion"} - from ${data.name?.trim() || "Visitor"}`;
-  const body = `Hi Mithun,\n\nName: ${data.name || ""}\nEmail: ${data.email || ""}\nSubject: ${data.subject || ""}\n\nMessage:\n${data.message || ""}\n`;
+  const body = `Hi Mithun,\n\nName: ${data.name || ""}\nEmail: ${data.email || ""}\nPhone: ${data.phone || "Not provided"}\nSubject: ${data.subject || ""}\n\nMessage:\n${data.message || ""}\n`;
   return `mailto:${emailConfig.toEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 
@@ -72,6 +74,7 @@ export async function sendContactInquiry(data: ContactFormData): Promise<Deliver
         {
           from_name: data.name,
           reply_to: data.email,
+          phone: data.phone || "Not provided",
           subject: data.subject,
           message: data.message,
           to_email: emailConfig.toEmail,
@@ -102,6 +105,7 @@ export async function sendContactInquiry(data: ContactFormData): Promise<Deliver
       body: JSON.stringify({
         name: data.name,
         email: data.email,
+        phone: data.phone || "Not provided",
         _subject: `[Portfolio Inquiry] ${data.subject} - from ${data.name}`,
         message: data.message,
         _template: "table",

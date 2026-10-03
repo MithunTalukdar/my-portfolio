@@ -29,6 +29,7 @@ type Status = "idle" | "sending" | "success" | "error";
 const initialFormData: ContactFormData = {
   name: "",
   email: "",
+  phone: "",
   subject: "",
   message: "",
 };
@@ -265,17 +266,29 @@ export function Contact() {
               </label>
             </div>
 
-            <label className="floating-field mt-5 block">
-              <input
-                name="subject"
-                value={formData.subject}
-                onChange={handleChange}
-                required
-                minLength={3}
-                placeholder=" "
-              />
-              <span>Project Subject</span>
-            </label>
+            <div className="mt-5 grid gap-5 sm:grid-cols-2">
+              <label className="floating-field">
+                <input
+                  type="tel"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  placeholder=" "
+                />
+                <span>Your Phone Number</span>
+              </label>
+              <label className="floating-field">
+                <input
+                  name="subject"
+                  value={formData.subject}
+                  onChange={handleChange}
+                  required
+                  minLength={3}
+                  placeholder=" "
+                />
+                <span>Project Subject</span>
+              </label>
+            </div>
 
             <label className="floating-field mt-5 block">
               <textarea
