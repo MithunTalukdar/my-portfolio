@@ -1,29 +1,49 @@
-Mithun Talukdar
-Full Stack Web Developer | MERN Stack Developer
+MITHUN TALUKDAR
+AI-Powered Full-Stack Web Developer (MERN)
 
-Email: your-email@example.com
+Email: mithuntalukdar2003@gmail.com
+Phone: +91 8777673839
+Location: Bidyadhari Pally, Canning-1, South 24 Parganas, Pin-743363, West Bengal, India
 GitHub: https://github.com/MithunTalukdar
 LinkedIn: https://linkedin.com/in/mithun-talukdar
 
-Professional Summary
-Passionate Full Stack Web Developer specializing in MongoDB, Express.js, React.js, and Node.js. Focused on building scalable web applications, modern user experiences, secure APIs, and practical software solutions.
+PROFILE INFO
+Highly motivated and results-driven Computer Science Engineering student and AI-Powered Full-Stack Developer, specializing in the MERN stack (MongoDB, Express.js, React.js, Node.js). Equipped with practical experience from a 6-month Web Development Internship at Euphoria GenX, where I collaborated on live projects and real-world development tasks. Demonstrated expertise in designing system architectures, building responsive user interfaces, and developing scalable real-time applications. Adept at problem-solving, object-oriented programming, and implementing modern web technologies to deliver seamless user experiences. Eager to leverage technical skills in a dynamic development environment to build impactful digital solutions and drive innovation.
 
-Core Skills
-Frontend: HTML5, CSS3, JavaScript ES6+, React.js, Tailwind CSS, Redux, React Router
-Backend: Node.js, Express.js, REST APIs, JWT Authentication, Bcrypt
-Database: MongoDB Atlas, Mongoose
-Tools: Git, GitHub, Postman, VS Code, Vercel, Render
+EDUCATION
+- B.Tech in Computer Science & Engineering: Greater Kolkata College of Engineering & Management (2022-2026) | Pursuing (Current CGPA / Percentage: 80%)
+- Higher Secondary Education (12th Board): Hari Har Mahavidyalay (2021-2022) | 87%
+- Secondary Education (10th Board): Canning David Sassoon High School (2019-2020) | 60%
 
-Projects
-Learning Management System (LMS)
-- Full-stack academic management platform using the MERN stack.
-- Includes authentication, course management, quiz system, progress tracking, certificate generation, and admin dashboard.
+SKILLS
+- Frontend Development: HTML5, CSS3, JavaScript (ES6+), React.js, Responsive Web Design, DOM Manipulation
+- Backend Development: Node.js, Express.js, Java (Core)
+- Databases & Cloud: MongoDB, Firebase/Firestore, API Integrations
+- AI Tools & Integrations: Prompt Engineering, LLM API Integration (OpenAI/Gemini), AI-Assisted Development (GitHub Copilot/Cursor)
+- Development Tools: Git, Version Control, Code Debugging, System Architecture & Folder Structuring
+- Core Competencies: Object-Oriented Programming (OOP), Data Structures & Algorithm Implementation, Computer Vision Basics
 
-Lumina E-Commerce Website
-- Modern shopping platform with responsive UI, product browsing, cart management, authentication, and checkout flow.
+LANGUAGES
+- Bengali: Native Proficiency
+- English: Working Proficiency
+- Hindi: Conversational Proficiency
 
-Swastik International Website
-- Professional business website with modern UI, responsive pages, company profile sections, and service showcases.
+EXPERIENCE
+Web Development Intern | Euphoria GenX
+Duration: 6 Months
+- Completed a 6-month internship at Euphoria GenX, gaining practical experience in professional software development.
+- Collaborated on real-world development tasks and worked on real live projects to deliver impactful web solutions.
+- Technologies Used: HTML5, CSS3, JavaScript (ES6+), React.js, Java, Responsive Web Design, Git / Version Control, Debugging, Basic Database Concepts, Object-Oriented Programming.
 
-Services
-Full Stack Web Development, Responsive Website Design, MERN Stack Applications, REST API Development, Database Design, Website Deployment.
+Internship Live Projects:
+- E-commerce Shopping Website
+  - Technologies: HTML, CSS, JavaScript, React.js
+  - Features: Developed a responsive UI, dynamic product catalog, shopping cart, secure user authentication, and implemented modern React components.
+- Food Ordering Website
+  - Technologies: HTML, CSS, JavaScript, React.js
+  - Features: Implemented seamless menu browsing, order placement workflows, responsive design, interactive UI, and robust state management.
+
+PROJECT PORTFOLIO
+- GreenCart (Full-Stack MERN): Developed a scalable, eco-friendly e-commerce platform featuring a dynamic product catalog, secure user authentication, and advanced shopping cart functionality.
+- Real-Time Collaborative To-Do List (React.js & Firebase): Built a task management app with instant collaborative updates, robust CRUD API calls, and Firestore integration for real-time data synchronization.
+- Real-Time Face Mask Detection System (React.js & Computer Vision): Created a web-based detection application integrating computer vision models with a responsive React.js frontend for real-time user feedback.
