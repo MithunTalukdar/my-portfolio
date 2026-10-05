@@ -79,9 +79,11 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
           ))}
         </div>
         <div className="mt-8 flex flex-wrap gap-3">
-          <MagneticButton className="primary-button" href={project.liveUrl} target="_blank" rel="noreferrer">
-            <FiExternalLink /> Live Demo
-          </MagneticButton>
+          {project.liveUrl && project.liveUrl !== project.repoUrl && (
+            <MagneticButton className="primary-button" href={project.liveUrl} target="_blank" rel="noreferrer">
+              <FiExternalLink /> Live Demo
+            </MagneticButton>
+          )}
           <MagneticButton className="secondary-button" href={project.repoUrl} target="_blank" rel="noreferrer">
             <FiGithub /> GitHub Repository
           </MagneticButton>

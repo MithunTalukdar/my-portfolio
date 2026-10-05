@@ -400,6 +400,25 @@ export const techWall = [
 
 export const projects: Project[] = [
   {
+    title: "AMD IT SOLUTION (ADM Techno Solution)",
+    slug: "amd-it-solution",
+    description:
+      "A comprehensive enterprise IT services and infrastructure portal in Kolkata providing 24/7 CCTV surveillance, computer and laptop hardware repair, corporate networking, and AMC contracts with rapid doorstep support.",
+    features: [
+      "On-Demand IT & CCTV Services",
+      "Doorstep Hardware Diagnostics",
+      "Enterprise AMC Contracts",
+      "Emergency 24/7 Service Channels",
+      "Automated WhatsApp & Direct Inquiries",
+      "High-Performance Responsive Portal",
+    ],
+    tech: ["React.js", "Node.js", "Express.js", "Tailwind CSS", "REST APIs", "Vite"],
+    categories: ["Full Stack", "Business"],
+    gradient: "from-blue-600 via-indigo-600 to-cyan-500",
+    liveUrl: "https://amd-tecno-solution.vercel.app",
+    repoUrl: "https://github.com/MithunTalukdar/AMD-IT-SOLUTION",
+  },
+  {
     title: "Learning Management System (LMS)",
     slug: "lms",
     description:
@@ -417,6 +436,25 @@ export const projects: Project[] = [
     gradient: "from-cyan-500 via-blue-600 to-indigo-700",
     liveUrl: "https://lms-pi-six-31.vercel.app",
     repoUrl: "https://github.com/MithunTalukdar/LMS",
+  },
+  {
+    title: "ResumeAI — AI Resume Builder & Career Studio",
+    slug: "user-auth",
+    description:
+      "A full-stack AI career acceleration platform and user management system powered by AI. Features secure JWT authentication, OTP email verification, intelligent ATS resume generation, profile sync, and instant PDF/DOCX downloads.",
+    features: [
+      "Secure JWT Auth & OTP Email Verification",
+      "AI-Powered ATS Resume Generator",
+      "User Profile Cloud CRUD & Sync",
+      "1-Click PDF & DOCX Document Export",
+      "HR Summary & LinkedIn Optimizer",
+      "RESTful API Architecture & MongoDB",
+    ],
+    tech: ["React.js", "Node.js", "Express.js", "MongoDB Atlas", "OpenAI API", "JWT Auth"],
+    categories: ["Full Stack", "Business"],
+    gradient: "from-blue-500 via-indigo-600 to-purple-700",
+    liveUrl: "https://myjobmekar.vercel.app",
+    repoUrl: "https://github.com/MithunTalukdar/User",
   },
   {
     title: "Lumina E-Commerce Shopping Platform",
@@ -453,24 +491,6 @@ export const projects: Project[] = [
     gradient: "from-purple-500 via-violet-600 to-pink-600",
     liveUrl: "https://course-pi-navy.vercel.app/",
     repoUrl: "https://github.com/MithunTalukdar/course",
-  },
-  {
-    title: "User Management & Auth System",
-    slug: "user-auth",
-    description:
-      "A production-ready full-stack authentication and user profile management system with JWT sessions, encrypted password hashing via Bcrypt, and complete CRUD user controls.",
-    features: [
-      "Secure JWT Token Auth",
-      "Bcrypt Password Encryption",
-      "Protected Route Guards",
-      "User Profile CRUD",
-      "RESTful API Architecture",
-    ],
-    tech: ["TypeScript", "React.js", "Node.js", "Express.js", "MongoDB Atlas"],
-    categories: ["Full Stack", "Business"],
-    gradient: "from-blue-500 via-indigo-600 to-purple-700",
-    liveUrl: "https://user-iota-ashy.vercel.app",
-    repoUrl: "https://github.com/MithunTalukdar/User",
   },
   {
     title: "Swastik International Corporate Portal",
@@ -573,7 +593,7 @@ export const services: Service[] = [
 
 export const achievements = [
   { value: 12, suffix: "+", label: "Projects Completed" },
-  { value: 9, suffix: "", label: "Public Repositories" },
+  { value: 10, suffix: "", label: "Public Repositories" },
   { value: 20, suffix: "+", label: "Technologies Mastered" },
   { value: 1200, suffix: "+", label: "Hours of Coding" },
 ];

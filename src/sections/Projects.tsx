@@ -76,16 +76,23 @@ export function Projects() {
                     {/* Darkened subtle overlay for crisp text */}
                     <div className="absolute inset-0 bg-slate-950/40 backdrop-blur-[2px]" />
 
-                    {/* Browser Dots */}
+                    {/* Browser Dots & Status */}
                     <div className="relative z-10 flex items-center justify-between">
                       <div className="flex items-center gap-1.5">
                         <span className="size-2.5 rounded-full bg-red-400/80" />
                         <span className="size-2.5 rounded-full bg-yellow-400/80" />
                         <span className="size-2.5 rounded-full bg-green-400/80" />
                       </div>
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-white/80 bg-black/30 px-2.5 py-0.5 rounded-full border border-white/10">
-                        {project.categories[0]}
-                      </span>
+                      <div className="flex items-center gap-1.5">
+                        {project.liveUrl && project.liveUrl !== project.repoUrl && (
+                          <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-emerald-300 bg-emerald-950/80 px-2 py-0.5 rounded-full border border-emerald-500/30">
+                            <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" /> Live
+                          </span>
+                        )}
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-white/80 bg-black/30 px-2.5 py-0.5 rounded-full border border-white/10">
+                          {project.categories[0]}
+                        </span>
+                      </div>
                     </div>
 
                     {/* 3D Orb Letter Icon */}
@@ -131,15 +138,24 @@ export function Projects() {
 
                     {/* Action Buttons */}
                     <div className="mt-6 flex flex-wrap items-center gap-2.5 pt-4 border-t border-white/10">
-                      <MagneticButton
-                        className="primary-button flex-1 py-2.5 px-3 text-xs font-bold justify-center"
-                        href={project.liveUrl}
-                        rel="noreferrer"
-                        target="_blank"
-                        aria-label={`${project.title} live demo`}
-                      >
-                        <FiExternalLink /> Live Demo
-                      </MagneticButton>
+                      {project.liveUrl && project.liveUrl !== project.repoUrl ? (
+                        <MagneticButton
+                          className="primary-button flex-1 py-2.5 px-3 text-xs font-bold justify-center"
+                          href={project.liveUrl}
+                          rel="noreferrer"
+                          target="_blank"
+                          aria-label={`${project.title} live demo`}
+                        >
+                          <FiExternalLink /> Live Demo
+                        </MagneticButton>
+                      ) : (
+                        <span
+                          className="flex-1 py-2.5 px-3 text-xs font-semibold text-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-400 select-none"
+                          title="Deployment in progress"
+                        >
+                          Demo Soon
+                        </span>
+                      )}
 
                       <MagneticButton
                         className="secondary-button flex-1 py-2.5 px-3 text-xs font-bold justify-center border-white/20 hover:border-cyan-400/60"

@@ -232,6 +232,17 @@ function MetricCard({ delay, icon: Icon, isLoading, label, suffix = "", value, a
 
 const pinnedRepos = [
   {
+    name: "AMD-IT-SOLUTION",
+    title: "AMD IT Solution Portal",
+    description: "Enterprise IT solutions platform with CCTV surveillance, computer repairs, and AMC service management.",
+    lang: "JavaScript",
+    langColor: "#f7df1e",
+    stars: 1,
+    url: "https://github.com/MithunTalukdar/AMD-IT-SOLUTION",
+    live: "https://amd-tecno-solution.vercel.app",
+    branch: "main",
+  },
+  {
     name: "LMS",
     title: "Learning Management System",
     description: "MERN Stack full academic platform with course enrollment, quizzes, certificates, and admin control.",
@@ -240,6 +251,17 @@ const pinnedRepos = [
     stars: 1,
     url: "https://github.com/MithunTalukdar/LMS",
     live: "https://lms-pi-six-31.vercel.app",
+    branch: "main",
+  },
+  {
+    name: "User",
+    title: "ResumeAI & User Auth",
+    description: "AI-powered resume builder and user profile authentication system with JWT sessions, OTP verification, and MongoDB.",
+    lang: "TypeScript",
+    langColor: "#3178c6",
+    stars: 1,
+    url: "https://github.com/MithunTalukdar/User",
+    live: "https://myjobmekar.vercel.app",
     branch: "main",
   },
   {
@@ -254,17 +276,6 @@ const pinnedRepos = [
     branch: "main",
   },
   {
-    name: "User",
-    title: "User Auth & Management",
-    description: "Production-ready JWT authentication, password encryption with Bcrypt, and full CRUD user profiles.",
-    lang: "TypeScript",
-    langColor: "#3178c6",
-    stars: 1,
-    url: "https://github.com/MithunTalukdar/User",
-    live: "https://user-iota-ashy.vercel.app",
-    branch: "main",
-  },
-  {
     name: "Swastik-International",
     title: "Swastik Corporate Portal",
     description: "Corporate trade and consulting web platform with dynamic services showcase and inquiry forms.",
@@ -273,6 +284,17 @@ const pinnedRepos = [
     stars: 1,
     url: "https://github.com/MithunTalukdar/Swastik-International",
     live: "https://swastik-international.vercel.app",
+    branch: "main",
+  },
+  {
+    name: "course",
+    title: "Course Learning Platform",
+    description: "Interactive online learning interface with modular curricula, video course streams, and student dashboard.",
+    lang: "JavaScript",
+    langColor: "#f7df1e",
+    stars: 1,
+    url: "https://github.com/MithunTalukdar/course",
+    live: "https://course-pi-navy.vercel.app/",
     branch: "main",
   },
 ];
